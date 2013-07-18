@@ -1,8 +1,8 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2009, Sun Microsystems, Inc.
- * 
+ * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
@@ -21,14 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.synopsys.arc.jenkinsci.plugins.extratoolinstallers.installers;
 
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.Node;
 import hudson.model.TaskListener;
-import hudson.tasks.CommandInterpreter;
 import hudson.tools.CommandInstaller;
 import hudson.tools.ToolInstallation;
 import hudson.tools.ToolInstaller;
@@ -39,43 +37,20 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
 /**
- * Installs tool via script execution of Batch script.
- * Inspired by "Command installer" from the Jenkins core.
- * @since 0.1
+ * Installs tool from shared directory.
+ * Actually, this installer doesn't perform any actions.
+ * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
  */
-public class BatchCommandInstaller extends ToolInstaller {
-
-    /**
-     * Command to execute, similar to {@link CommandInterpreter#command}.
-     */
-    private final String command;
-
+public class SharedDirectoryInstaller extends ToolInstaller {
     /**
      * Resulting tool home directory.
      */
     private final String toolHome;
 
     @DataBoundConstructor
-    public BatchCommandInstaller(String label, String command, String toolHome) {
+    public SharedDirectoryInstaller(String label, String toolHome) {
         super(label);
-        this.command = fixCrLf(command);
         this.toolHome = toolHome;
-    }
-
-    /**
-     * Fix CR/LF and always make it Unix style.
-     */
-    //TODO: replace by windows style
-    private static String fixCrLf(String s) {
-        // eliminate CR
-        int idx;
-        while((idx=s.indexOf("\r\n"))!=-1)
-            s = s.substring(0,idx)+s.substring(idx+1);
-        return s;
-    }
-    
-    public String getCommand() {
-        return command;
     }
 
     public String getToolHome() {
@@ -85,33 +60,15 @@ public class BatchCommandInstaller extends ToolInstaller {
     @Override
     public FilePath performInstallation(ToolInstallation tool, Node node, TaskListener log) throws IOException, InterruptedException {
         FilePath dir = preferredLocation(tool, node);
-        // XXX support Windows batch scripts, Unix scripts with interpreter line, etc. (see CommandInterpreter subclasses)
-        FilePath script = dir.createTextTempFile("hudson", ".bat", command);
-        try {
-            String[] cmd = {"cmd", "/c", "call", script.getRemote()};
-            int r = node.createLauncher(log).launch().cmds(cmd).stdout(log).pwd(dir).join();
-            if (r != 0) {
-                throw new IOException("Command returned status " + r);
-            }
-        } finally {
-            script.delete();
-        }
         return dir.child(toolHome);
     }
     
     @Extension
     public static class DescriptorImpl extends ToolInstallerDescriptor<CommandInstaller> {
-
+        
+        @Override
         public String getDisplayName() {
-            return Messages.BatchCommandInstaller_DescriptorImpl_displayName();
-        }
-
-        public FormValidation doCheckCommand(@QueryParameter String value) {
-            if (value.length() > 0) {
-                return FormValidation.ok();
-            } else {
-                return FormValidation.error(Messages.BatchCommandInstaller_no_command());
-            }
+            return Messages.SharedDirectoryInstaller_DescriptorImpl_displayName();
         }
 
         public FormValidation doCheckToolHome(@QueryParameter String value) {
@@ -121,7 +78,5 @@ public class BatchCommandInstaller extends ToolInstaller {
                 return FormValidation.error(Messages.BatchCommandInstaller_no_toolHome());
             }
         }
-
     }
-
 }
