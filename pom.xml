@@ -8,7 +8,7 @@
 
     <groupId>com.synopsys.arc.jenkinsci</groupId>
     <artifactId>extra-tool-installers</artifactId>
-    <version>0.1</version>
+    <version>0.0.1-SNAPSHOT</version>
     <name>Extra Tool Installers Plugin</name>
     <description>Provides additional tool installers</description>
     <packaging>hpi</packaging>
@@ -47,8 +47,8 @@
     </developers>
 
     <scm>
-        <connection>scm:git:ssh://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git</developerConnection>
+        <connection>scm:git:ssh://github.com/${project.artifactId}-plugin.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/${project.artifactId}-plugin.git</developerConnection>
         <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
     </scm>
 
