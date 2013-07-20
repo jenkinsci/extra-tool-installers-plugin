@@ -12,6 +12,7 @@
     <name>Extra Tool Installers Plugin</name>
     <description>Provides additional tool installers</description>
     <packaging>hpi</packaging>
+    <url>https://wiki.jenkins-ci.org/display/JENKINS/Extra+Tool+Installers+Plugin</url>
 
     <properties>
             <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -45,11 +46,10 @@
             </developer>
     </developers>
 
-    <!--TODO: Add correct pathes-->
     <scm>
-            <connection>scm:git:ssh://github.com/</connection>
-            <developerConnection>scm:git:ssh://git@github.com/</developerConnection>
-            <url>https://github.com/</url>
+        <connection>scm:git:ssh://github.com/${project.artifactId}-plugin.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/${project.artifactId}-plugin.git</developerConnection>
+        <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
     </scm>
 
     <licenses>
