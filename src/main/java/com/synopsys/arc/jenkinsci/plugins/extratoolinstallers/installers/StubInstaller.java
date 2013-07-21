@@ -37,30 +37,35 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
 /**
- * Installs tool from shared directory.
- * Actually, this installer doesn't perform any actions.
+ * Stub installer, which doesn't perform installation.
+ * Can be used in order to notify users about unsupported platform (and optionally fail the build)
  * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * @since 0.2
  */
-public class SharedDirectoryInstaller extends ToolInstaller {
-    /**
-     * Resulting tool home directory.
-     */
-    private final String toolHome;
-
+public class StubInstaller extends ToolInstaller {
+    private final String message;
+    private final boolean failTheBuild;
+    
     @DataBoundConstructor
-    public SharedDirectoryInstaller(String label, String toolHome) {
+    public StubInstaller(String label, String message, boolean failTheBuild) {
         super(label);
-        this.toolHome = toolHome;
+        this.message = hudson.Util.fixEmptyAndTrim(message);
+        this.failTheBuild = failTheBuild;
     }
-
-    public String getToolHome() {
-        return toolHome;
-    }
-
+    
     @Override
-    public FilePath performInstallation(ToolInstallation tool, Node node, TaskListener log) throws IOException, InterruptedException {
-        FilePath dir = preferredLocation(tool, node);
-        return dir.child(toolHome);
+    public FilePath performInstallation(ToolInstallation tool, Node node, TaskListener log) 
+            throws IOException, InterruptedException 
+    {
+        FilePath dir = preferredLocation(tool, node);       
+        String messagePrefix = "["+tool.getName()+"] - ";
+        String outMessage = messagePrefix + (message != null ? message : Messages.StubInstaller_defaultMessage());
+        log.getLogger().println(outMessage);
+        
+        if (failTheBuild) {
+            throw new IOException(messagePrefix+"Installation has been interrupted");
+        }    
+        return dir;
     }
     
     @Extension
@@ -68,14 +73,14 @@ public class SharedDirectoryInstaller extends ToolInstaller {
         
         @Override
         public String getDisplayName() {
-            return Messages.SharedDirectoryInstaller_DescriptorImpl_displayName();
+            return Messages.StubInstaller_displayName();
         }
 
-        public FormValidation doCheckToolHome(@QueryParameter String value) {
+        public FormValidation doCheckMessage(@QueryParameter String value) {
             if (value.length() > 0) {
                 return FormValidation.ok();
             } else {
-                return FormValidation.error(Messages.SharedDirectoryInstaller_no_toolHome());
+                return FormValidation.warning(Messages.StubInstaller_noMessage());
             }
         }
     }
