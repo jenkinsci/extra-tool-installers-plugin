@@ -50,7 +50,5 @@ public class ExtraToolInstallersException extends IOException {
 
     public ToolInstaller getInstaller() {
         return installer;
-    }
-    
-    
+    } 
 } 

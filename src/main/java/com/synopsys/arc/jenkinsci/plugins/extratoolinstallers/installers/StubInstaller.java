@@ -23,6 +23,8 @@
  */
 package com.synopsys.arc.jenkinsci.plugins.extratoolinstallers.installers;
 
+import com.synopsys.arc.jenkinsci.plugins.extratoolinstallers.utils.EnvStringParseHelper;
+import com.synopsys.arc.jenkinsci.plugins.extratoolinstallers.utils.ExtraToolInstallersException;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.Node;
@@ -67,11 +69,11 @@ public class StubInstaller extends ToolInstaller {
     {
         FilePath dir = preferredLocation(tool, node);       
         String messagePrefix = "["+tool.getName()+"] - ";
-        String outMessage = messagePrefix + (message != null ? message : Messages.StubInstaller_defaultMessage());
+        String outMessage = messagePrefix + (message != null ? EnvStringParseHelper.substituteNodeVariablesValidated(this, "Message", message, node) : Messages.StubInstaller_defaultMessage());
         log.getLogger().println(outMessage);
         
         if (failTheBuild) {
-            throw new IOException(messagePrefix+"Installation has been interrupted");
+            throw new ExtraToolInstallersException(this, messagePrefix+"Installation has been interrupted");
         }    
         return dir;
     }

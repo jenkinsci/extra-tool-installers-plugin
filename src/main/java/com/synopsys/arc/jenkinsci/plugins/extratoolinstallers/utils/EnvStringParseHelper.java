@@ -45,6 +45,13 @@ public class EnvStringParseHelper {
         return environment.expand(macroString);     
     }
     
+    public static String substituteNodeVariablesValidated(ToolInstaller installer, String stringName, String macroString, Node node) 
+            throws ExtraToolInstallersException {
+        String res = substituteNodeVariables(macroString, node);
+        checkStringForMacro(installer, stringName, res);
+        return res;
+    }
+    
     public static String substituteNodeVariables(String macroString, Node node) {
         if (macroString == null) return null;
         if (!macroString.contains("${")) {

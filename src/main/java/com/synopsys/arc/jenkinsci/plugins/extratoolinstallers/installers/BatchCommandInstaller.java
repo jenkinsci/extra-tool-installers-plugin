@@ -24,6 +24,7 @@
 
 package com.synopsys.arc.jenkinsci.plugins.extratoolinstallers.installers;
 
+import com.synopsys.arc.jenkinsci.plugins.extratoolinstallers.utils.EnvStringParseHelper;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.Node;
@@ -84,6 +85,8 @@ public class BatchCommandInstaller extends ToolInstaller {
 
     @Override
     public FilePath performInstallation(ToolInstallation tool, Node node, TaskListener log) throws IOException, InterruptedException {
+        String substitutedHome = EnvStringParseHelper.substituteNodeVariablesValidated(this, "Tool Home", toolHome, node);   
+        
         FilePath dir = preferredLocation(tool, node);
         // XXX support Windows batch scripts, Unix scripts with interpreter line, etc. (see CommandInterpreter subclasses)
         FilePath script = dir.createTextTempFile("hudson", ".bat", command);
@@ -96,12 +99,13 @@ public class BatchCommandInstaller extends ToolInstaller {
         } finally {
             script.delete();
         }
-        return dir.child(toolHome);
+        return dir.child(substitutedHome);
     }
     
     @Extension
     public static class DescriptorImpl extends ToolInstallerDescriptor<CommandInstaller> {
 
+        @Override
         public String getDisplayName() {
             return Messages.BatchCommandInstaller_DescriptorImpl_displayName();
         }
@@ -121,7 +125,5 @@ public class BatchCommandInstaller extends ToolInstaller {
                 return FormValidation.error(Messages.BatchCommandInstaller_no_toolHome());
             }
         }
-
     }
-
 }
