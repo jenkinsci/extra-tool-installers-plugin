@@ -23,6 +23,7 @@
  */
 package com.synopsys.arc.jenkinsci.plugins.extratoolinstallers.installers;
 
+import com.synopsys.arc.jenkinsci.plugins.extratoolinstallers.utils.EnvStringParseHelper;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.Node;
@@ -59,8 +60,9 @@ public class SharedDirectoryInstaller extends ToolInstaller {
 
     @Override
     public FilePath performInstallation(ToolInstallation tool, Node node, TaskListener log) throws IOException, InterruptedException {
+        String substitutedHome = EnvStringParseHelper.substituteNodeVariablesValidated(this, "Tool Home", toolHome, node);   
         FilePath dir = preferredLocation(tool, node);
-        return dir.child(toolHome);
+        return dir.child(substitutedHome);
     }
     
     @Extension
