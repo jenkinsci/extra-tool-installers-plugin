@@ -52,6 +52,14 @@ public class StubInstaller extends ToolInstaller {
         this.message = hudson.Util.fixEmptyAndTrim(message);
         this.failTheBuild = failTheBuild;
     }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public boolean isFailTheBuild() {
+        return failTheBuild;
+    }
     
     @Override
     public FilePath performInstallation(ToolInstallation tool, Node node, TaskListener log) 
