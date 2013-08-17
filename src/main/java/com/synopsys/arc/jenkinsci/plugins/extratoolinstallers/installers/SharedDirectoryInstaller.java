@@ -42,15 +42,15 @@ import org.kohsuke.stapler.QueryParameter;
  * Actually, this installer doesn't perform any actions.
  * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
  */
-public class SharedDirectoryInstaller extends ToolInstaller {
+public class SharedDirectoryInstaller extends AbstractExtraToolInstaller {
     /**
      * Resulting tool home directory.
      */
     private final String toolHome;
 
     @DataBoundConstructor
-    public SharedDirectoryInstaller(String label, String toolHome) {
-        super(label);
+    public SharedDirectoryInstaller(String label, String toolHome, boolean failOnSubstitution) {
+        super(label, failOnSubstitution);
         this.toolHome = toolHome;
     }
 
@@ -60,7 +60,7 @@ public class SharedDirectoryInstaller extends ToolInstaller {
 
     @Override
     public FilePath performInstallation(ToolInstallation tool, Node node, TaskListener log) throws IOException, InterruptedException {
-        String substitutedHome = EnvStringParseHelper.substituteNodeVariablesValidated(this, "Tool Home", toolHome, node);   
+        String substitutedHome = substituteNodeVariablesValidated("Tool Home", toolHome, node);   
         FilePath dir = preferredLocation(tool, node);
         return dir.child(substitutedHome);
     }

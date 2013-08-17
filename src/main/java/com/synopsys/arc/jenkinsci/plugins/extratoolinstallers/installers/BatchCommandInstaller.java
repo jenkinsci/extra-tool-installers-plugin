@@ -24,15 +24,12 @@
 
 package com.synopsys.arc.jenkinsci.plugins.extratoolinstallers.installers;
 
-import com.synopsys.arc.jenkinsci.plugins.extratoolinstallers.utils.EnvStringParseHelper;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.Node;
 import hudson.model.TaskListener;
 import hudson.tasks.CommandInterpreter;
-import hudson.tools.CommandInstaller;
 import hudson.tools.ToolInstallation;
-import hudson.tools.ToolInstaller;
 import hudson.tools.ToolInstallerDescriptor;
 import hudson.util.FormValidation;
 import java.io.IOException;
@@ -44,7 +41,7 @@ import org.kohsuke.stapler.QueryParameter;
  * Inspired by "Command installer" from the Jenkins core.
  * @since 0.1
  */
-public class BatchCommandInstaller extends ToolInstaller {
+public class BatchCommandInstaller extends AbstractExtraToolInstaller {
 
     /**
      * Command to execute, similar to {@link CommandInterpreter#command}.
@@ -57,8 +54,8 @@ public class BatchCommandInstaller extends ToolInstaller {
     private final String toolHome;
 
     @DataBoundConstructor
-    public BatchCommandInstaller(String label, String command, String toolHome) {
-        super(label);
+    public BatchCommandInstaller(String label, String command, String toolHome, boolean failOnSubstitution) {
+        super(label, failOnSubstitution);
         this.command = fixCrLf(command);
         this.toolHome = toolHome;
     }
@@ -85,7 +82,7 @@ public class BatchCommandInstaller extends ToolInstaller {
 
     @Override
     public FilePath performInstallation(ToolInstallation tool, Node node, TaskListener log) throws IOException, InterruptedException {
-        String substitutedHome = EnvStringParseHelper.substituteNodeVariablesValidated(this, "Tool Home", toolHome, node);   
+        String substitutedHome = substituteNodeVariablesValidated("Tool Home", toolHome, node);   
         
         FilePath dir = preferredLocation(tool, node);
         // XXX support Windows batch scripts, Unix scripts with interpreter line, etc. (see CommandInterpreter subclasses)
@@ -103,7 +100,7 @@ public class BatchCommandInstaller extends ToolInstaller {
     }
     
     @Extension
-    public static class DescriptorImpl extends ToolInstallerDescriptor<CommandInstaller> {
+    public static class DescriptorImpl extends ToolInstallerDescriptor<BatchCommandInstaller> {
 
         @Override
         public String getDisplayName() {
