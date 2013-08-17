@@ -44,13 +44,13 @@ import org.kohsuke.stapler.QueryParameter;
  * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
  * @since 0.2
  */
-public class StubInstaller extends ToolInstaller {
+public class StubInstaller extends AbstractExtraToolInstaller {
     private final String message;
     private final boolean failTheBuild;
     
     @DataBoundConstructor
-    public StubInstaller(String label, String message, boolean failTheBuild) {
-        super(label);
+    public StubInstaller(String label, String message, boolean failTheBuild, boolean failOnSubstitution) {
+        super(label, failOnSubstitution);
         this.message = hudson.Util.fixEmptyAndTrim(message);
         this.failTheBuild = failTheBuild;
     }
@@ -69,7 +69,7 @@ public class StubInstaller extends ToolInstaller {
     {
         FilePath dir = preferredLocation(tool, node);       
         String messagePrefix = "["+tool.getName()+"] - ";
-        String outMessage = messagePrefix + (message != null ? EnvStringParseHelper.substituteNodeVariablesValidated(this, "Message", message, node) : Messages.StubInstaller_defaultMessage());
+        String outMessage = messagePrefix + (message != null ? substituteNodeVariablesValidated("Message", message, node) : Messages.StubInstaller_defaultMessage());
         log.getLogger().println(outMessage);
         
         if (failTheBuild) {
