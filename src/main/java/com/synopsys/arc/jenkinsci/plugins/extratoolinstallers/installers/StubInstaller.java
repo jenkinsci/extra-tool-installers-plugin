@@ -23,7 +23,6 @@
  */
 package com.synopsys.arc.jenkinsci.plugins.extratoolinstallers.installers;
 
-import com.synopsys.arc.jenkinsci.plugins.extratoolinstallers.utils.EnvStringParseHelper;
 import com.synopsys.arc.jenkinsci.plugins.extratoolinstallers.utils.ExtraToolInstallersException;
 import hudson.Extension;
 import hudson.FilePath;
@@ -31,7 +30,6 @@ import hudson.model.Node;
 import hudson.model.TaskListener;
 import hudson.tools.CommandInstaller;
 import hudson.tools.ToolInstallation;
-import hudson.tools.ToolInstaller;
 import hudson.tools.ToolInstallerDescriptor;
 import hudson.util.FormValidation;
 import java.io.IOException;
@@ -48,11 +46,13 @@ public class StubInstaller extends AbstractExtraToolInstaller {
     private final String message;
     private final boolean failTheBuild;
     
+    
     @DataBoundConstructor
-    public StubInstaller(String label, String message, boolean failTheBuild, boolean failOnSubstitution) {
-        super(label, failOnSubstitution);
+    public StubInstaller(String label, String message, String toolHome, boolean failTheBuild, boolean failOnSubstitution) {
+        super(label, toolHome, failOnSubstitution);
         this.message = hudson.Util.fixEmptyAndTrim(message);
         this.failTheBuild = failTheBuild;
+        
     }
 
     public String getMessage() {
@@ -67,7 +67,9 @@ public class StubInstaller extends AbstractExtraToolInstaller {
     public FilePath performInstallation(ToolInstallation tool, Node node, TaskListener log) 
             throws IOException, InterruptedException 
     {
-        FilePath dir = preferredLocation(tool, node);       
+        FilePath dir = preferredLocation(tool, node);  
+        String substitutedHome = substituteNodeVariablesValidated("Tool Home", getToolHome(), node);
+        
         String messagePrefix = "["+tool.getName()+"] - ";
         String outMessage = messagePrefix + (message != null ? substituteNodeVariablesValidated("Message", message, node) : Messages.StubInstaller_defaultMessage());
         log.getLogger().println(outMessage);
@@ -75,7 +77,7 @@ public class StubInstaller extends AbstractExtraToolInstaller {
         if (failTheBuild) {
             throw new ExtraToolInstallersException(this, messagePrefix+"Installation has been interrupted");
         }    
-        return dir;
+        return dir.child(substitutedHome);
     }
     
     @Extension

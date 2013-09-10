@@ -27,8 +27,5 @@ THE SOFTWARE.
     <f:entry title="${%Command}" field="command">
         <f:textarea/>
     </f:entry>
-    <f:entry title="${%Tool Home}" field="toolHome">
-        <f:textbox/>
-    </f:entry>
     <st:include class="com.synopsys.arc.jenkinsci.plugins.extratoolinstallers.installers.AbstractExtraToolInstaller" page="config.jelly"/>
 </j:jelly>

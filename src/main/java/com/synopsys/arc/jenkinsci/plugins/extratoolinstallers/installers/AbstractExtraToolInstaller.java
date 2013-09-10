@@ -36,14 +36,20 @@ import hudson.tools.ToolInstaller;
  */
 public abstract class AbstractExtraToolInstaller extends ToolInstaller {
     private boolean failOnSubstitution;
+    private final String toolHome;
     
-    public AbstractExtraToolInstaller(String label, boolean failOnSubstitution) {
+    public AbstractExtraToolInstaller(String label, String toolHome, boolean failOnSubstitution) {
         super(label);
         this.failOnSubstitution = failOnSubstitution;
+        this.toolHome = toolHome;
     }
 
-    public boolean isFailOnSubstitution() {
+    public final boolean isFailOnSubstitution() {
         return failOnSubstitution;
+    }
+
+    public final String getToolHome() {
+        return toolHome;
     }
     
     /**
