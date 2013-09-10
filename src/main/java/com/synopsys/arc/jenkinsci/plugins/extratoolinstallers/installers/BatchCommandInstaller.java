@@ -48,16 +48,10 @@ public class BatchCommandInstaller extends AbstractExtraToolInstaller {
      */
     private final String command;
 
-    /**
-     * Resulting tool home directory.
-     */
-    private final String toolHome;
-
     @DataBoundConstructor
     public BatchCommandInstaller(String label, String command, String toolHome, boolean failOnSubstitution) {
-        super(label, failOnSubstitution);
+        super(label, toolHome, failOnSubstitution);
         this.command = fixCrLf(command);
-        this.toolHome = toolHome;
     }
 
     /**
@@ -76,13 +70,9 @@ public class BatchCommandInstaller extends AbstractExtraToolInstaller {
         return command;
     }
 
-    public String getToolHome() {
-        return toolHome;
-    }
-
     @Override
     public FilePath performInstallation(ToolInstallation tool, Node node, TaskListener log) throws IOException, InterruptedException {
-        String substitutedHome = substituteNodeVariablesValidated("Tool Home", toolHome, node);   
+        String substitutedHome = substituteNodeVariablesValidated("Tool Home", getToolHome(), node);   
         
         FilePath dir = preferredLocation(tool, node);
         // XXX support Windows batch scripts, Unix scripts with interpreter line, etc. (see CommandInterpreter subclasses)

@@ -23,6 +23,9 @@ THE SOFTWARE.
 -->
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:st="jelly:stapler" xmlns:t="/hudson/tools">
+    <f:entry title="${%Tool Home}" field="toolHome">
+        <f:textbox/>
+    </f:entry>
     <f:entry title="${%Substitution}" field="failOnSubstitution">
         <f:checkbox title="Fail the build if substituton fails"/>
         <f:description>Fails the installation of the tool and further operations</f:description>
