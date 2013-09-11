@@ -23,14 +23,12 @@
  */
 package com.synopsys.arc.jenkinsci.plugins.extratoolinstallers.installers;
 
-import com.synopsys.arc.jenkinsci.plugins.extratoolinstallers.utils.EnvStringParseHelper;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.Node;
 import hudson.model.TaskListener;
 import hudson.tools.CommandInstaller;
 import hudson.tools.ToolInstallation;
-import hudson.tools.ToolInstaller;
 import hudson.tools.ToolInstallerDescriptor;
 import hudson.util.FormValidation;
 import java.io.IOException;
@@ -43,24 +41,15 @@ import org.kohsuke.stapler.QueryParameter;
  * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
  */
 public class SharedDirectoryInstaller extends AbstractExtraToolInstaller {
-    /**
-     * Resulting tool home directory.
-     */
-    private final String toolHome;
 
     @DataBoundConstructor
     public SharedDirectoryInstaller(String label, String toolHome, boolean failOnSubstitution) {
-        super(label, failOnSubstitution);
-        this.toolHome = toolHome;
-    }
-
-    public String getToolHome() {
-        return toolHome;
+        super(label, toolHome, failOnSubstitution);
     }
 
     @Override
     public FilePath performInstallation(ToolInstallation tool, Node node, TaskListener log) throws IOException, InterruptedException {
-        String substitutedHome = substituteNodeVariablesValidated("Tool Home", toolHome, node);   
+        String substitutedHome = substituteNodeVariablesValidated("Tool Home", getToolHome(), node);   
         FilePath dir = preferredLocation(tool, node);
         return dir.child(substitutedHome);
     }

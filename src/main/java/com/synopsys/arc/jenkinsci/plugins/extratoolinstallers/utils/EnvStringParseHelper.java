@@ -44,9 +44,7 @@ public class EnvStringParseHelper {
         }    
         return environment.expand(macroString);     
     }
-    
-    
-    
+        
     public static String substituteNodeVariables(String macroString, Node node) {
         if (macroString == null) return null;
         if (!macroString.contains("${")) {
