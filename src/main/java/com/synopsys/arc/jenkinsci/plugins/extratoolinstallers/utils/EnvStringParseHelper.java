@@ -74,7 +74,7 @@ public class EnvStringParseHelper {
      */
     public static String substituteNodeProperty(String macroString, NodeProperty<?> property) {
         // Get environment variables
-        if (EnvironmentVariablesNodeProperty.class.equals(property.getClass())) {
+        if (property != null && property instanceof EnvironmentVariablesNodeProperty ) {
            EnvironmentVariablesNodeProperty prop = (EnvironmentVariablesNodeProperty)property;
            return substituteEnvVars(macroString, prop.getEnvVars());
         }
