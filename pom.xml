@@ -8,7 +8,7 @@
 
     <groupId>com.synopsys.arc.jenkinsci</groupId>
     <artifactId>extra-tool-installers</artifactId>
-    <version>0.2.1-SNAPSHOT</version>
+    <version>0.3-SNAPSHOT</version>
     <name>Jenkins Extra Tool Installers Plugin</name>
     <description>Provides additional tool installers</description>
     <packaging>hpi</packaging>
