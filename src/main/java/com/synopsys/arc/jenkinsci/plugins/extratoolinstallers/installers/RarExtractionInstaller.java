@@ -1,10 +1,7 @@
 package com.synopsys.arc.jenkinsci.plugins.extratoolinstallers.installers;
 
-
-
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
-
 
 import hudson.Extension;
 import hudson.FilePath;
@@ -40,7 +37,7 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 	private final String toolHome;
 
 	private static final int MAX_REDIRECTS = 20;
-	
+
 	public static final String RAR_EXTRACTION_INSTALLER_BAD_CONNECTION = "Server rejected connection.";
 	public static final String RAR_EXTRACTION_INSTALLER_COULD_NOT_CONNECT = "Could not connect to URL.";
 	public static final String RAR_EXTRACTION_INSTALLER_DISPLAY_NAME = "Extract *.rar";
@@ -159,14 +156,14 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 			}
 			CountingInputStream cis = new CountingInputStream(in);
 			unrarFrom(cis);
-			// try{
-			// // Packa upp här (med CountingIS?)
-			//
-			// }catch(IOException e){
-			// throw new
-			// IOException(String.format("Failed to unpack %s (%d bytes read of total %d)",
-			// archive,cis.getByteCount(),con.getContentLength()),e);
-			// }
+//			try {
+//				// Packa upp här (med CountingIS?)
+//
+//			} catch (IOException e) {
+//				throw new IOException(String.format(
+//						"Failed to unpack %s (%d bytes read of total %d)",
+//						archive, cis.getByteCount(), con.getContentLength()), e);
+//			}
 			timestamp.touch(sourceTimestamp);
 			return true;
 
@@ -178,18 +175,19 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 
 	private void unrarFrom(InputStream _in) {
 		final InputStream in = new CountingInputStream(_in);
-		try{
+		try {
 			unrar(new File(toolHome), in);
-		}catch(IOException e){
-//			throw new IOException("Failed installation - IOException in unrarFrom(...)", e);
+		} catch (IOException e) {
+			// throw new
+			// IOException("Failed installation - IOException in unrarFrom(...)",
+			// e);
 		}
 	}
 
 	private void unrar(File dir, InputStream in) throws IOException {
-		File tmpFile = File.createTempFile("tmpzip", null); // uses
-															// java.io.tmpdir
+		File tmpFile = File.createTempFile("tmpzip", null);
+
 		try {
-			// TODO why does this not simply use ZipInputStream?
 			IOUtils.copy(in, tmpFile);
 			unrar(dir, tmpFile);
 		} finally {
@@ -220,13 +218,13 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 
 					System.out.println("Extracting: " + fh.getFileNameString());
 					if (fh.isDirectory()) {
-//						 createDirectory(fh, destination);
-//						mkdirs(new File(fh.getFileNameString()));
+						// createDirectory(fh, destination);
+						// mkdirs(new File(fh.getFileNameString()));
 					} else {
-//						 File f = createFile(fh, destination);
-//						OutputStream stream = new FileOutputStream(f);
-//						arch.extractFile(fh, stream);
-//						stream.close();
+						// File f = createFile(fh, destination);
+						// OutputStream stream = new FileOutputStream(f);
+						// arch.extractFile(fh, stream);
+						// stream.close();
 					}
 				}
 			}
@@ -237,18 +235,18 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 		}
 	}
 
-//	private boolean mkdirs(File dir) {
-//		if (dir.exists())
-//			return false;
-//
-//		filterNonNull().mkdirs(dir);
-//		return dir.mkdirs();
-//	}
+	// private boolean mkdirs(File dir) {
+	// if (dir.exists())
+	// return false;
+	//
+	// filterNonNull().mkdirs(dir);
+	// return dir.mkdirs();
+	// }
 
-//	private @Nonnull
-//	SoloFilePathFilter filterNonNull() {
-//		return filter != null ? filter : UNRESTRICTED;
-//	}
+	// private @Nonnull
+	// SoloFilePathFilter filterNonNull() {
+	// return filter != null ? filter : UNRESTRICTED;
+	// }
 
 	@Extension
 	public static class DescriptorImpl extends
@@ -264,12 +262,14 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 				conn.connect();
 				if (conn instanceof HttpURLConnection) {
 					if (((HttpURLConnection) conn).getResponseCode() != HttpURLConnection.HTTP_OK) {
-						return FormValidation.error(RAR_EXTRACTION_INSTALLER_COULD_NOT_CONNECT);
+						return FormValidation
+								.error(RAR_EXTRACTION_INSTALLER_COULD_NOT_CONNECT);
 					}
 				}
 				return FormValidation.ok();
 			} catch (MalformedURLException x) {
-				return FormValidation.error(RAR_EXTRACTION_INSTALLER_MALFORMED_URL);
+				return FormValidation
+						.error(RAR_EXTRACTION_INSTALLER_MALFORMED_URL);
 			} catch (IOException x) {
 				return FormValidation.error(x,
 						RAR_EXTRACTION_INSTALLER_COULD_NOT_CONNECT);
@@ -277,76 +277,17 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 		}
 
 	}
-	
-}
 
 	// private static String normalize(String path){
-	// // Eventuellt behövs en private metod som "normaliserar"
+	// // Might need a method to normalize the path where the tool will be
+	// installed.
 	// }
 
+	//
 	// private boolean mkdirs(File dir) {
 	// if (dir.exists()) return false;
 	//
 	// filterNonNull().mkdirs(dir);
 	// return dir.mkdirs();
 	// }
-	//
-	//
-	
-	
-	
-	
-	
-	
-	// -----------------------------------------------------------------------------------------------
-	// // --------- Sub-methods for installIfNecessary
-	// --------------------------------------------------
-	// //
-	// -----------------------------------------------------------------------------------------------
-	//
-	// public boolean exists() throws IOException, InterruptedException {
-	// return act(new SecureFileCallable<Boolean>() {
-	// private static final long serialVersionUID = 1L;
-	// public Boolean invoke(File f, VirtualChannel channel) throws IOException
-	// {
-	// return stating(f).exists();
-	// }
-	// });
-	// }
-	//
-	// public <T> T act(final FileCallable<T> callable) throws IOException,
-	// InterruptedException {
-	// return act(callable,callable.getClass().getClassLoader());
-	// }
-	//
-	// private <T> T act(final FileCallable<T> callable, ClassLoader cl) throws
-	// IOException, InterruptedException {
-	// if(channel!=null) {
-	// // run this on a remote system
-	// try {
-	// DelegatingCallable<T,IOException> wrapper = new
-	// FileCallableWrapper<T>(callable, cl);
-	// for (FileCallableWrapperFactory factory :
-	// ExtensionList.lookup(FileCallableWrapperFactory.class)) {
-	// wrapper = factory.wrap(wrapper);
-	// }
-	// return channel.call(wrapper);
-	// } catch (TunneledInterruptedException e) {
-	// throw (InterruptedException)new
-	// InterruptedException(e.getMessage()).initCause(e);
-	// } catch (AbortException e) {
-	// throw e; // pass through so that the caller can catch it as
-	// AbortException
-	// } catch (IOException e) {
-	// // wrap it into a new IOException so that we get the caller's stack trace
-	// as well.
-	// throw new IOException("remote file operation failed: " + remote + " at "
-	// + channel + ": " + e, e);
-	// }
-	// } else {
-	// // the file is on the local machine.
-	// return callable.invoke(new File(remote), localChannel);
-	// }
-	// }
-	//
-	// 
+}
