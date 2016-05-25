@@ -26,7 +26,7 @@ import com.github.junrar.exception.RarException;
 import com.github.junrar.rarfile.FileHeader;
 
 import org.apache.commons.io.input.CountingInputStream;
-
+import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
 public class RarExtractionInstaller extends AbstractExtraToolInstaller {
@@ -36,13 +36,20 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 	 */
 	private final String toolHome;
 
+	/*
+	 * 
+	 */
 	private static final int MAX_REDIRECTS = 20;
 
+	/*
+	 * String Messages for the DescriptorImpl class.
+	 */
 	public static final String RAR_EXTRACTION_INSTALLER_BAD_CONNECTION = "Server rejected connection.";
 	public static final String RAR_EXTRACTION_INSTALLER_COULD_NOT_CONNECT = "Could not connect to URL.";
 	public static final String RAR_EXTRACTION_INSTALLER_DISPLAY_NAME = "Extract *.rar";
 	public static final String RAR_EXTRACTION_INSTALLER_MALFORMED_URL = "Malformed URL.";
 
+	@DataBoundConstructor
 	public RarExtractionInstaller(String label, String toolHome,
 			boolean failOnSubstitution) {
 		super(label, toolHome, failOnSubstitution);
@@ -66,13 +73,14 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 						+ node.getDisplayName(), MAX_REDIRECTS)) {
 			log.getLogger().println("RAR extraction successful.");
 		}
-		// Inget subdir om det inte behövs.
+		// Is a subdir necessary?
 		return dir;
 	}
 
 	private boolean installIfNecessaryFrom(FilePath dir, @Nonnull URL archive,
 			@CheckForNull TaskListener listener, @Nonnull String message,
 			int maxRedir) throws IOException, InterruptedException {
+			
 		try {
 			FilePath timestamp = dir.child(".timestamp");
 			long lastModified = timestamp.lastModified();
@@ -85,8 +93,6 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 				con.connect();
 			} catch (IOException x) {
 				if (dir.exists()) {
-					// Cannot connect now, so assume whatever was last unpacked
-					// is still OK.
 					if (listener != null) {
 						listener.getLogger().println(
 								"Skipping installation of " + archive + " to "
@@ -117,39 +123,38 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 			long sourceTimestamp = con.getLastModified();
 
 			if (dir.exists()) {
-				if (lastModified != 0 && sourceTimestamp == lastModified)
-					return false; // already up to date
-				// Fungerar deras metoder i mitt fall?
+				if (lastModified != 0 && sourceTimestamp == lastModified){
+					return false;
+				}
 				dir.deleteContents();
 			} else {
-				// Fungerar deras metoder i mitt fall?
 				dir.mkdirs();
 			}
 			if (listener != null) {
 				listener.getLogger().println(message);
 			}
 
-			// FELKÄLLA eventuellt.
-			// Fungerar deras metoder i mitt fall?
-			// if (dir.isRemote()) {
-			// // First try to download from the slave machine.
-			// try {
-			// // Ska detta göras?
-			// dir.act(new Unpack(archive));
-			// timestamp.touch(sourceTimestamp);
-			// return true;
-			// } catch (IOException x) {
-			// if (listener != null) {
-			// x.printStackTrace(listener.error("Failed to download " + archive
-			// + " from slave; will retry from master"));
-			// }
-			// }
-			// }
+
+			// Necessary?
+//			if (dir.isRemote()) {
+//				// First try to download from the slave machine.
+//				try {
+//					dir.act(new Unpack(archive));
+//					timestamp.touch(sourceTimestamp);
+//					return true;
+//				} catch (IOException x) {
+//					if (listener != null) {
+//						x.printStackTrace(listener.error("Failed to download "
+//								+ archive
+//								+ " from slave; will retry from master"));
+//					}
+//				}
+//			}
 
 			// for HTTP downloads, enable automatic retry for added resilience
 			InputStream in;
 			if (archive.getProtocol().startsWith("http")) {
-				// in = ProxyConfiguration.getInputStream(archive);
+//				 in = ProxyConfiguration.getInputStream(archive);
 				in = con.getInputStream();
 			} else {
 				in = con.getInputStream();
@@ -157,8 +162,7 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 			CountingInputStream cis = new CountingInputStream(in);
 			unrarFrom(cis);
 //			try {
-//				// Packa upp här (med CountingIS?)
-//
+//				// Extract here
 //			} catch (IOException e) {
 //				throw new IOException(String.format(
 //						"Failed to unpack %s (%d bytes read of total %d)",
@@ -171,6 +175,7 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 			throw new IOException("Failed to install " + archive + " to "
 					+ archive, e);
 		}
+		
 	}
 
 	private void unrarFrom(InputStream _in) {
@@ -178,9 +183,7 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 		try {
 			unrar(new File(toolHome), in);
 		} catch (IOException e) {
-			// throw new
-			// IOException("Failed installation - IOException in unrarFrom(...)",
-			// e);
+//			 throw new IOException("Failed installation - IOException in unrarFrom(...)", e);
 		}
 	}
 
@@ -235,18 +238,18 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 		}
 	}
 
-	// private boolean mkdirs(File dir) {
-	// if (dir.exists())
-	// return false;
-	//
-	// filterNonNull().mkdirs(dir);
-	// return dir.mkdirs();
-	// }
-
-	// private @Nonnull
-	// SoloFilePathFilter filterNonNull() {
-	// return filter != null ? filter : UNRESTRICTED;
-	// }
+//	// private boolean mkdirs(File dir) {
+//	// if (dir.exists())
+//	// return false;
+//	//
+//	// filterNonNull().mkdirs(dir);
+//	// return dir.mkdirs();
+//	// }
+//
+//	// private @Nonnull
+//	// SoloFilePathFilter filterNonNull() {
+//	// return filter != null ? filter : UNRESTRICTED;
+//	// }
 
 	@Extension
 	public static class DescriptorImpl extends
