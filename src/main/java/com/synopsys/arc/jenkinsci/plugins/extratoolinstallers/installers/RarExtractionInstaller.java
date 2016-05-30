@@ -2,8 +2,13 @@ package com.synopsys.arc.jenkinsci.plugins.extratoolinstallers.installers;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import hudson.AbortException;
+import hudson.remoting.*;
 import hudson.Extension;
+import hudson.ExtensionPoint;
+import hudson.ExtensionList;
 import hudson.FilePath;
 import hudson.ProxyConfiguration;
 import hudson.model.TaskListener;
@@ -11,15 +16,29 @@ import hudson.model.Node;
 import hudson.tools.ToolInstallation;
 import hudson.tools.ToolInstallerDescriptor;
 import hudson.util.FormValidation;
+import hudson.util.DaemonThreadFactory;
 import hudson.util.IOUtils;
+import hudson.util.NamingThreadFactory;
+import hudson.util.ExceptionCatchingThreadFactory;
+
+import jenkins.MasterToSlaveFileCallable;
+import jenkins.SlaveToMasterFileCallable;
+import jenkins.util.ContextResettingExecutorService;
+import jenkins.FilePathFilter;
+import jenkins.SoloFilePathFilter;
+
+import org.jenkinsci.remoting.*;
 
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 
 import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
@@ -36,13 +55,20 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 	 */
 	private final String toolHome;
 
+	private VirtualChannel channel;
+
+	private String remote;
+
 	/*
-	 * 
+	 * Max amount of redirects allowed.
 	 */
 	private static final int MAX_REDIRECTS = 20;
 
+	private transient @Nullable SoloFilePathFilter filter;
+	
 	/*
-	 * String Messages for the DescriptorImpl class.
+	 * String Messages for the DescriptorImpl class. This should be moved to the
+	 * class "Messages" later.
 	 */
 	public static final String RAR_EXTRACTION_INSTALLER_BAD_CONNECTION = "Server rejected connection.";
 	public static final String RAR_EXTRACTION_INSTALLER_COULD_NOT_CONNECT = "Could not connect to URL.";
@@ -65,6 +91,9 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 			TaskListener log) throws IOException, InterruptedException {
 
 		FilePath dir = preferredLocation(tool, node);
+		this.remote = dir.getRemote();
+		this.channel = dir.getChannel();
+		
 		if (installIfNecessaryFrom(
 				dir,
 				new URL(super.getToolHome()),
@@ -80,7 +109,10 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 	private boolean installIfNecessaryFrom(FilePath dir, @Nonnull URL archive,
 			@CheckForNull TaskListener listener, @Nonnull String message,
 			int maxRedir) throws IOException, InterruptedException {
-			
+
+		listener.getLogger().println(
+				"----- TROUBLESHOOTING - InstallIfNecessary has been entered.");
+
 		try {
 			FilePath timestamp = dir.child(".timestamp");
 			long lastModified = timestamp.lastModified();
@@ -91,6 +123,8 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 					con.setIfModifiedSince(lastModified);
 				}
 				con.connect();
+				listener.getLogger().println(
+						"----- TROUBLESHOOTING - con.connect.");
 			} catch (IOException x) {
 				if (dir.exists()) {
 					if (listener != null) {
@@ -123,88 +157,108 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 			long sourceTimestamp = con.getLastModified();
 
 			if (dir.exists()) {
-				if (lastModified != 0 && sourceTimestamp == lastModified){
+				if (lastModified != 0 && sourceTimestamp == lastModified) {
+					listener.getLogger()
+							.println(
+									"----- TROUBLESHOOTING - lastModified. Already up to date.");
 					return false;
 				}
 				dir.deleteContents();
 			} else {
-				dir.mkdirs();
+				listener.getLogger().println(
+						"----- TROUBLESHOOTING - dir.mkdirs().");
+				dir.mkdirs();										// Possibly copy that method to this class
 			}
 			if (listener != null) {
 				listener.getLogger().println(message);
 			}
 
-
-			// Necessary?
-//			if (dir.isRemote()) {
-//				// First try to download from the slave machine.
-//				try {
-//					dir.act(new Unpack(archive));
-//					timestamp.touch(sourceTimestamp);
-//					return true;
-//				} catch (IOException x) {
-//					if (listener != null) {
-//						x.printStackTrace(listener.error("Failed to download "
-//								+ archive
-//								+ " from slave; will retry from master"));
-//					}
-//				}
-//			}
+			/* --- Probably needed --- */
+			if (dir.isRemote()) {
+				// First try to download from the slave machine.
+				try {
+					// dir.act(new Unpack(archive));
+					timestamp.touch(sourceTimestamp);
+					return true;
+				} catch (IOException x) {
+					if (listener != null) {
+						x.printStackTrace(listener.error("Failed to download "
+								+ archive
+								+ " from slave; will retry from master"));
+					}
+				}
+			}
 
 			// for HTTP downloads, enable automatic retry for added resilience
 			InputStream in;
 			if (archive.getProtocol().startsWith("http")) {
-//				 in = ProxyConfiguration.getInputStream(archive);
+				// in = ProxyConfiguration.getInputStream(archive);
+				listener.getLogger().println(
+						"----- TROUBLESHOOTING - Recognized http protocol.");
 				in = con.getInputStream();
 			} else {
 				in = con.getInputStream();
 			}
 			CountingInputStream cis = new CountingInputStream(in);
-			unrarFrom(cis);
-//			try {
-//				// Extract here
-//			} catch (IOException e) {
-//				throw new IOException(String.format(
-//						"Failed to unpack %s (%d bytes read of total %d)",
-//						archive, cis.getByteCount(), con.getContentLength()), e);
-//			}
+			unrarFrom(cis, listener);
+			// try {
+			// // Or extract here?
+			// } catch (IOException e) {
+			// throw new IOException(String.format(
+			// "Failed to unpack %s (%d bytes read of total %d)",
+			// archive, cis.getByteCount(), con.getContentLength()), e);
+			// }
 			timestamp.touch(sourceTimestamp);
+			in.close(); // Maybe not needed
 			return true;
 
 		} catch (IOException e) {
 			throw new IOException("Failed to install " + archive + " to "
 					+ archive, e);
 		}
+
+	}
+
+	public void unrarFrom(InputStream _in, final TaskListener listener) {
+		listener.getLogger().println(
+				"----- TROUBLESHOOTING - 1/3 unrarFrom entered.");
+		final InputStream inRar = new CountingInputStream(_in);
+		act(new SecureFileCallable<Void>() {
+			public Void invoke(File dir, VirtualChannel channel) throws IOException {
+				unrar(dir, inRar, listener);
+				return null;
+			}
+			private static final long serialVersionUID = 1L;
+		});
 		
 	}
 
-	private void unrarFrom(InputStream _in) {
-		final InputStream in = new CountingInputStream(_in);
-		try {
-			unrar(new File(toolHome), in);
-		} catch (IOException e) {
-//			 throw new IOException("Failed installation - IOException in unrarFrom(...)", e);
-		}
-	}
-
-	private void unrar(File dir, InputStream in) throws IOException {
-		File tmpFile = File.createTempFile("tmpzip", null);
+	private void unrar(File dir, InputStream inRar, TaskListener listener)
+			throws IOException {
+		listener.getLogger().println(
+				"----- TROUBLESHOOTING - 2/3 unrar entered.");
+		File tmpRar = File.createTempFile("tmprar", null);
 
 		try {
-			IOUtils.copy(in, tmpFile);
-			unrar(dir, tmpFile);
+			IOUtils.copy(inRar, tmpRar);
+			unrar(dir, tmpRar, listener);
 		} finally {
-			tmpFile.delete();
+			tmpRar.delete();
 		}
 	}
 
-	private void unrar(File archive, File tmpFile) {
+	private void unrar(File target, File tmpRar, TaskListener listener) {
+		listener.getLogger().println(
+				"----- TROUBLESHOOTING - 3/3 Final unrar entered.");
 		Archive arch = null;
+		
 		try {
-			arch = new Archive(archive);
+			arch = new Archive(tmpRar);
 			if (arch != null) {
 				if (arch.isEncrypted()) {
-					System.out.println("Archive encrypted. Aborting.");
+					listener.getLogger()
+							.println(
+									"----- TROUBLESHOOTING - Archive encrypted. Extraction aborted.");
 					return;
 				}
 				FileHeader fh = null;
@@ -214,42 +268,253 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 						break;
 					}
 					if (fh.isEncrypted()) {
-						System.out.println("File encrypted: "
-								+ fh.getFileNameString());
+						listener.getLogger().println(
+								"----- TROUBLESHOOTING - Encrypted file in the archive. File: "
+										+ fh.getFileNameString());
 						continue;
 					}
 
-					System.out.println("Extracting: " + fh.getFileNameString());
+					listener.getLogger().println(
+							"----- TROUBLESHOOTING - Extracting: " + fh.getFileNameString());
+					File f = new File(target, fh.getFileNameString());
 					if (fh.isDirectory()) {
+						/* Next in line is a folder -> create a directory */
+						mkdirs(f);
 						// createDirectory(fh, destination);
-						// mkdirs(new File(fh.getFileNameString()));
 					} else {
+						/* Next in line is a file -> create a file */
+						File p = f.getParentFile();
+						if(p != null){
+							mkdirs(p);
+						}
+						
+						InputStream input = arch.getInputStream(fh);
+						try {
+	                        IOUtils.copy(input, writing(f));
+	                    } finally {
+	                        input.close();
+	                    }
 						// File f = createFile(fh, destination);
 						// OutputStream stream = new FileOutputStream(f);
 						// arch.extractFile(fh, stream);
 						// stream.close();
 					}
+					f.setLastModified(fh.getCTime().getTime());		// Possibly wrong call from 'fh'. (getCtime/getMTime/getATime)
 				}
 			}
 		} catch (IOException e) {
-			// Handle exception
+			/* --- Handle exception --- */
 		} catch (RarException e) {
-			// Handle exception
+			/* --- Handle exception --- */
 		}
 	}
 
-//	// private boolean mkdirs(File dir) {
-//	// if (dir.exists())
-//	// return false;
-//	//
-//	// filterNonNull().mkdirs(dir);
-//	// return dir.mkdirs();
-//	// }
-//
-//	// private @Nonnull
-//	// SoloFilePathFilter filterNonNull() {
-//	// return filter != null ? filter : UNRESTRICTED;
-//	// }
+	private boolean mkdirs(File dir) {
+        if (dir.exists())   return false;
+
+        filterNonNull().mkdirs(dir);
+        return dir.mkdirs();
+    }
+	
+	/**
+     * Pass through 'f' after ensuring that we can write to that file.
+     */
+    private File writing(File f) {
+        FilePathFilter filter = filterNonNull();
+        if (!f.exists())
+            filter.create(f);
+        filter.write(f);
+        return f;
+    }
+	
+	/*
+	 * --- Methods from FilePath.java that might be needed to create directories
+	 * on nodes? ---
+	 */
+	// private boolean mkdirs(File dir) {
+	// if (dir.exists())
+	// return false;
+	//
+	// filterNonNull().mkdirs(dir);
+	// return dir.mkdirs();
+	// }
+	//
+	 private @Nonnull SoloFilePathFilter filterNonNull() {
+		 return filter != null ? filter : UNRESTRICTED;
+	 }
+
+	 private static final SoloFilePathFilter UNRESTRICTED = SoloFilePathFilter.wrap(FilePathFilter.UNRESTRICTED);
+	 
+	/* Might need to normalize the path, keep this in mind */
+	private static String normalize(String path) {
+		return "";
+	}
+
+	/**
+	 * {@link FileCallable}s that can be executed anywhere, including the
+	 * master.
+	 * 
+	 * The code is the same as {@link SlaveToMasterFileCallable}, but used as a
+	 * marker to designate those impls that use {@link FilePathFilter}.
+	 */
+	/* package */static abstract class SecureFileCallable<T> extends
+			SlaveToMasterFileCallable<T> {
+//		private static final long serialVersionUID = 1L;
+		// Varför behövs serialVersionUID?
+	}
+
+	/**
+	 * Executes some program on the machine that this {@link FilePath} exists,
+	 * so that one can perform local file operations.
+	 */
+	public <T> T act(final FileCallable<T> callable) throws IOException,
+			InterruptedException {
+		return act(callable, callable.getClass().getClassLoader());
+	}
+
+	private <T> T act(final FileCallable<T> callable, ClassLoader cl)
+			throws IOException, InterruptedException {
+		if (channel != null) {
+			// run this on a remote system
+			try {
+				DelegatingCallable<T, IOException> wrapper = new FileCallableWrapper<T>(
+						callable, cl);
+				for (FileCallableWrapperFactory factory : ExtensionList
+						.lookup(FileCallableWrapperFactory.class)) {
+					wrapper = factory.wrap(wrapper);
+				}
+				return channel.call(wrapper);
+			} catch (TunneledInterruptedException e) {
+				throw (InterruptedException) new InterruptedException(
+						e.getMessage()).initCause(e);
+			} catch (AbortException e) {
+				throw e; // pass through so that the caller can catch it as
+							// AbortException
+			} catch (IOException e) {
+				// wrap it into a new IOException so that we get the caller's
+				// stack trace as well.
+				throw new IOException("remote file operation failed: " + remote
+						+ " at " + channel + ": " + e, e);
+			}
+		} else {
+			// the file is on the local machine.
+			return callable.invoke(new File(remote), localChannel);
+		}
+	}
+
+	/**
+	 * Code that gets executed on the machine where the {@link FilePath} is
+	 * local. Used to act on {@link FilePath}. <strong>Warning:</code>
+	 * implementations must be serializable, so prefer a static nested class to
+	 * an inner class.
+	 * 
+	 * <p>
+	 * Subtypes would likely want to extend from either
+	 * {@link MasterToSlaveCallable} or {@link SlaveToMasterFileCallable}.
+	 * 
+	 * @see FilePath#act(FileCallable)
+	 */
+	public interface FileCallable<T> extends Serializable, RoleSensitive {
+		/**
+		 * Performs the computational task on the node where the data is
+		 * located.
+		 * 
+		 * <p>
+		 * All the exceptions are forwarded to the caller.
+		 * 
+		 * @param f
+		 *            {@link File} that represents the local file that
+		 *            {@link FilePath} has represented.
+		 * @param channel
+		 *            The "back pointer" of the {@link Channel} that represents
+		 *            the communication with the node from where the code was
+		 *            sent.
+		 */
+		T invoke(File f, VirtualChannel channel) throws IOException,
+				InterruptedException;
+	}
+
+	/**
+	 * This extension point allows to contribute a wrapper around a fileCallable
+	 * so that a plugin can "intercept" a call.
+	 * <p>
+	 * The {@link #wrap(hudson.remoting.DelegatingCallable)} method itself will
+	 * be executed on master (and may collect contextual data if needed) and the
+	 * returned wrapper will be executed on remote.
+	 * 
+	 * @since 1.482
+	 * @see AbstractInterceptorCallableWrapper
+	 */
+	public static abstract class FileCallableWrapperFactory implements
+			ExtensionPoint {
+
+		public abstract <T> DelegatingCallable<T, IOException> wrap(
+				DelegatingCallable<T, IOException> callable);
+
+	}
+
+	/**
+	 * Adapts {@link FileCallable} to {@link Callable}.
+	 */
+	private class FileCallableWrapper<T> implements
+			DelegatingCallable<T, IOException> {
+		private final FileCallable<T> callable;
+		private transient ClassLoader classLoader;
+
+		public FileCallableWrapper(FileCallable<T> callable) {
+			this.callable = callable;
+			this.classLoader = callable.getClass().getClassLoader();
+		}
+
+		private FileCallableWrapper(FileCallable<T> callable,
+				ClassLoader classLoader) {
+			this.callable = callable;
+			this.classLoader = classLoader;
+		}
+
+		public T call() throws IOException {
+			try {
+				return callable.invoke(new File(remote), Channel.current());
+			} catch (InterruptedException e) {
+				throw new TunneledInterruptedException(e);
+			}
+		}
+
+		/**
+		 * Role check comes from {@link FileCallable}s.
+		 */
+		@Override
+		public void checkRoles(RoleChecker checker) throws SecurityException {
+			callable.checkRoles(checker);
+		}
+
+		public ClassLoader getClassLoader() {
+			return classLoader;
+		}
+
+		private static final long serialVersionUID = 1L;
+	}
+
+	/**
+	 * Used to tunnel {@link InterruptedException} over a Java signature that
+	 * only allows {@link IOException}
+	 */
+	private static class TunneledInterruptedException extends IOException {
+		private TunneledInterruptedException(InterruptedException cause) {
+			super(cause);
+		}
+
+		private static final long serialVersionUID = 1L;
+	}
+
+	/* --- Added a cast to ExecutorService here ---*/
+	private static final ExecutorService threadPoolForRemoting = (ExecutorService) new ContextResettingExecutorService(
+			Executors.newCachedThreadPool(new ExceptionCatchingThreadFactory(
+					new NamingThreadFactory(new DaemonThreadFactory(),
+							"FilePath.localPool"))));
+
+	public static LocalChannel localChannel = new LocalChannel(
+			threadPoolForRemoting);
 
 	@Extension
 	public static class DescriptorImpl extends
@@ -278,19 +543,5 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 						RAR_EXTRACTION_INSTALLER_COULD_NOT_CONNECT);
 			}
 		}
-
 	}
-
-	// private static String normalize(String path){
-	// // Might need a method to normalize the path where the tool will be
-	// installed.
-	// }
-
-	//
-	// private boolean mkdirs(File dir) {
-	// if (dir.exists()) return false;
-	//
-	// filterNonNull().mkdirs(dir);
-	// return dir.mkdirs();
-	// }
 }
