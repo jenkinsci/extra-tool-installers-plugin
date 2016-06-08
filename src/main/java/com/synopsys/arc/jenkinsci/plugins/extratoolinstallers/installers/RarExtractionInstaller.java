@@ -6,9 +6,9 @@ import javax.annotation.Nullable;
 
 import hudson.AbortException;
 import hudson.remoting.*;
-import hudson.Extension;
 import hudson.ExtensionPoint;
 import hudson.ExtensionList;
+import hudson.Extension;
 import hudson.FilePath;
 import hudson.ProxyConfiguration;
 import hudson.model.TaskListener;
@@ -20,8 +20,9 @@ import hudson.util.DaemonThreadFactory;
 import hudson.util.IOUtils;
 import hudson.util.NamingThreadFactory;
 import hudson.util.ExceptionCatchingThreadFactory;
+//import hudson.matrix.MatrixRun;
 
-import jenkins.MasterToSlaveFileCallable;
+//import jenkins.MasterToSlaveFileCallable;
 import jenkins.SlaveToMasterFileCallable;
 import jenkins.util.ContextResettingExecutorService;
 import jenkins.FilePathFilter;
@@ -42,6 +43,7 @@ import java.io.Serializable;
 
 import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
+//import com.github.junrar.exception.RarException.RarExceptionType;
 import com.github.junrar.rarfile.FileHeader;
 
 import org.apache.commons.io.input.CountingInputStream;
@@ -60,7 +62,7 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 	private String remote;
 
 	/*
-	 * Max amount of redirects allowed.
+	 * Max amount of redirects allowed. Predefined?
 	 */
 	private static final int MAX_REDIRECTS = 20;
 
@@ -72,7 +74,7 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 	 */
 	public static final String RAR_EXTRACTION_INSTALLER_BAD_CONNECTION = "Server rejected connection.";
 	public static final String RAR_EXTRACTION_INSTALLER_COULD_NOT_CONNECT = "Could not connect to URL.";
-	public static final String RAR_EXTRACTION_INSTALLER_DISPLAY_NAME = "Extract *.rar";
+	public static final String RAR_EXTRACTION_INSTALLER_DISPLAY_NAME = "--- Extract *.rar ---------";
 	public static final String RAR_EXTRACTION_INSTALLER_MALFORMED_URL = "Malformed URL.";
 
 	@DataBoundConstructor
@@ -223,6 +225,7 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 		listener.getLogger().println(
 				"----- TROUBLESHOOTING - 1/3 unrarFrom entered.");
 		final InputStream inRar = new CountingInputStream(_in);
+		try{
 		act(new SecureFileCallable<Void>() {
 			public Void invoke(File dir, VirtualChannel channel) throws IOException {
 				unrar(dir, inRar, listener);
@@ -230,6 +233,11 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 			}
 			private static final long serialVersionUID = 1L;
 		});
+		}catch(IOException e){
+			// Handle exception
+		}catch(InterruptedException e){
+			// Handle exception
+		}
 		
 	}
 
@@ -238,7 +246,7 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 		listener.getLogger().println(
 				"----- TROUBLESHOOTING - 2/3 unrar entered.");
 		File tmpRar = File.createTempFile("tmprar", null);
-
+		
 		try {
 			IOUtils.copy(inRar, tmpRar);
 			unrar(dir, tmpRar, listener);
@@ -251,6 +259,12 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 		listener.getLogger().println(
 				"----- TROUBLESHOOTING - 3/3 Final unrar entered.");
 		Archive arch = null;
+//		
+//		try{
+//			arch = new Archive(tmpRar);
+//		}catch(Exception r){
+//			
+//		}
 		
 		try {
 			arch = new Archive(tmpRar);
@@ -261,12 +275,9 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 									"----- TROUBLESHOOTING - Archive encrypted. Extraction aborted.");
 					return;
 				}
-				FileHeader fh = null;
-				while (true) {
-					fh = arch.nextFileHeader();
-					if (fh == null) {
-						break;
-					}
+				FileHeader fh = arch.nextFileHeader();
+				while (fh != null) {
+					
 					if (fh.isEncrypted()) {
 						listener.getLogger().println(
 								"----- TROUBLESHOOTING - Encrypted file in the archive. File: "
@@ -279,18 +290,18 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 					File f = new File(target, fh.getFileNameString());
 					if (fh.isDirectory()) {
 						/* Next in line is a folder -> create a directory */
-						mkdirs(f);
+//						mkdirs(f);
 						// createDirectory(fh, destination);
 					} else {
 						/* Next in line is a file -> create a file */
 						File p = f.getParentFile();
 						if(p != null){
-							mkdirs(p);
+//							mkdirs(p);
 						}
 						
 						InputStream input = arch.getInputStream(fh);
 						try {
-	                        IOUtils.copy(input, writing(f));
+//	                        IOUtils.copy(input, writing(f));
 	                    } finally {
 	                        input.close();
 	                    }
@@ -300,6 +311,7 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 						// stream.close();
 					}
 					f.setLastModified(fh.getCTime().getTime());		// Possibly wrong call from 'fh'. (getCtime/getMTime/getATime)
+					fh = arch.nextFileHeader();
 				}
 			}
 		} catch (IOException e) {
@@ -327,23 +339,11 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
         return f;
     }
 	
-	/*
-	 * --- Methods from FilePath.java that might be needed to create directories
-	 * on nodes? ---
-	 */
-	// private boolean mkdirs(File dir) {
-	// if (dir.exists())
-	// return false;
-	//
-	// filterNonNull().mkdirs(dir);
-	// return dir.mkdirs();
-	// }
-	//
-	 private @Nonnull SoloFilePathFilter filterNonNull() {
-		 return filter != null ? filter : UNRESTRICTED;
-	 }
+	private @Nonnull SoloFilePathFilter filterNonNull() {
+		return filter != null ? filter : UNRESTRICTED;
+	}
 
-	 private static final SoloFilePathFilter UNRESTRICTED = SoloFilePathFilter.wrap(FilePathFilter.UNRESTRICTED);
+	private static final SoloFilePathFilter UNRESTRICTED = SoloFilePathFilter.wrap(FilePathFilter.UNRESTRICTED);
 	 
 	/* Might need to normalize the path, keep this in mind */
 	private static String normalize(String path) {
@@ -357,22 +357,21 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 	 * The code is the same as {@link SlaveToMasterFileCallable}, but used as a
 	 * marker to designate those impls that use {@link FilePathFilter}.
 	 */
-	/* package */static abstract class SecureFileCallable<T> extends
+	static abstract class SecureFileCallable<T> extends
 			SlaveToMasterFileCallable<T> {
-//		private static final long serialVersionUID = 1L;
-		// Varför behövs serialVersionUID?
+		private static final long serialVersionUID = 1L;
 	}
 
 	/**
 	 * Executes some program on the machine that this {@link FilePath} exists,
 	 * so that one can perform local file operations.
 	 */
-	public <T> T act(final FileCallable<T> callable) throws IOException,
+	public <T> T act(final SecureFileCallable<T> callable) throws IOException,
 			InterruptedException {
 		return act(callable, callable.getClass().getClassLoader());
 	}
 
-	private <T> T act(final FileCallable<T> callable, ClassLoader cl)
+	private <T> T act(final SecureFileCallable<T> callable, ClassLoader cl)
 			throws IOException, InterruptedException {
 		if (channel != null) {
 			// run this on a remote system
@@ -458,17 +457,17 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 	 */
 	private class FileCallableWrapper<T> implements
 			DelegatingCallable<T, IOException> {
-		private final FileCallable<T> callable;
+		private final SecureFileCallable<T> callable;
 		private transient ClassLoader classLoader;
 
-		public FileCallableWrapper(FileCallable<T> callable) {
-			this.callable = callable;
-			this.classLoader = callable.getClass().getClassLoader();
-		}
+//		public FileCallableWrapper(FileCallable<T> callable) {
+//			this.callable = callable;
+//			this.classLoader = callable.getClass().getClassLoader();
+//		}
 
-		private FileCallableWrapper(FileCallable<T> callable,
+		private FileCallableWrapper(SecureFileCallable<T> callable2,
 				ClassLoader classLoader) {
-			this.callable = callable;
+			this.callable = callable2;
 			this.classLoader = classLoader;
 		}
 
@@ -508,7 +507,7 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 	}
 
 	/* --- Added a cast to ExecutorService here ---*/
-	private static final ExecutorService threadPoolForRemoting = (ExecutorService) new ContextResettingExecutorService(
+	private static final ExecutorService threadPoolForRemoting = (ExecutorService) new ContextResettingExecutorService (
 			Executors.newCachedThreadPool(new ExceptionCatchingThreadFactory(
 					new NamingThreadFactory(new DaemonThreadFactory(),
 							"FilePath.localPool"))));
