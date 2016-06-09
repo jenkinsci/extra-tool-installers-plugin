@@ -35,17 +35,11 @@
     </pluginRepositories>
 
     <dependencies>
-<!-- .................... Working .................... -->
-
-
-<!-- http://mvnrepository.com/artifact/com.github.beothorn/junrar -->
 	<dependency>
 	    <groupId>com.github.junrar</groupId>
 	    <artifactId>junrar</artifactId>
 	    <version>0.7</version>
 	</dependency>
-
-
 
 	<dependency>
             <groupId>org.jenkins-ci.main</groupId>
@@ -71,8 +65,6 @@
 	    <version>1.6</version>
 	</dependency>
 
-<!-- .................... Errors .................... -->
-
 	<dependency>
 	    <groupId>org.jenkins-ci.main</groupId>
 	    <artifactId>jenkins-core</artifactId>
@@ -84,17 +76,6 @@
 	    <artifactId>hudson-core</artifactId>
 	    <version>3.3.3</version>
 	</dependency>
-
-<!-- http://mvnrepository.com/artifact/org.jvnet.hudson.main/maven3-model -->
-<dependency>
-    <groupId>org.jvnet.hudson.main</groupId>
-    <artifactId>maven3-model</artifactId>
-    <version>2.2.0</version>
-</dependency>
-
-
-
-<!-- ................................................ -->
     </dependencies>
 
     <developers>

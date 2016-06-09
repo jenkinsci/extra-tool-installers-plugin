@@ -20,7 +20,6 @@ import hudson.util.DaemonThreadFactory;
 import hudson.util.IOUtils;
 import hudson.util.NamingThreadFactory;
 import hudson.util.ExceptionCatchingThreadFactory;
-//import hudson.matrix.MatrixRun;
 
 //import jenkins.MasterToSlaveFileCallable;
 import jenkins.SlaveToMasterFileCallable;
@@ -43,7 +42,6 @@ import java.io.Serializable;
 
 import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
-//import com.github.junrar.exception.RarException.RarExceptionType;
 import com.github.junrar.rarfile.FileHeader;
 
 import org.apache.commons.io.input.CountingInputStream;
@@ -52,7 +50,7 @@ import org.kohsuke.stapler.QueryParameter;
 
 public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 
-	/*
+	/**
 	 * URL of a RAR file which should be downloaded in case the tool is missing.
 	 */
 	private final String toolHome;
@@ -62,7 +60,7 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 	private String remote;
 
 	/*
-	 * Max amount of redirects allowed. Predefined?
+	 * Max amount of redirects allowed. Predefined? Necessary?
 	 */
 	private static final int MAX_REDIRECTS = 20;
 
@@ -108,6 +106,7 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 		return dir;
 	}
 
+	// Source: hudson.tools.FilePath.java
 	private boolean installIfNecessaryFrom(FilePath dir, @Nonnull URL archive,
 			@CheckForNull TaskListener listener, @Nonnull String message,
 			int maxRedir) throws IOException, InterruptedException {
@@ -169,17 +168,17 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 			} else {
 				listener.getLogger().println(
 						"----- TROUBLESHOOTING - dir.mkdirs().");
-				dir.mkdirs();										// Possibly copy that method to this class
+				dir.mkdirs();
 			}
 			if (listener != null) {
 				listener.getLogger().println(message);
 			}
 
-			/* --- Probably needed --- */
 			if (dir.isRemote()) {
 				// First try to download from the slave machine.
 				try {
-					// dir.act(new Unpack(archive));
+					/* Get the Unpack method from FilePath also? */
+//					dir.act(new Unpack(archive));
 					timestamp.touch(sourceTimestamp);
 					return true;
 				} catch (IOException x) {
@@ -194,7 +193,7 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 			// for HTTP downloads, enable automatic retry for added resilience
 			InputStream in;
 			if (archive.getProtocol().startsWith("http")) {
-				// in = ProxyConfiguration.getInputStream(archive);
+				in = ProxyConfiguration.getInputStream(archive);
 				listener.getLogger().println(
 						"----- TROUBLESHOOTING - Recognized http protocol.");
 				in = con.getInputStream();
@@ -221,6 +220,7 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 
 	}
 
+	// Source: hudson.tools.FilePath.java (Changed name)
 	public void unrarFrom(InputStream _in, final TaskListener listener) {
 		listener.getLogger().println(
 				"----- TROUBLESHOOTING - 1/3 unrarFrom entered.");
@@ -241,6 +241,7 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 		
 	}
 
+	// Source: hudson.tools.FilePath.java (Changed name)
 	private void unrar(File dir, InputStream inRar, TaskListener listener)
 			throws IOException {
 		listener.getLogger().println(
@@ -255,72 +256,76 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 		}
 	}
 
+	
+	/**
+	 * Performs the extraction of tmpRar into the file target using the JUnrar library. 
+	 * 
+	 * @param target Where the tool will be installed.
+	 * @param tmpRar Installation file.
+	 * @param listener TaskListener for troubleshooting. Can be removed in final version.
+	 */
 	private void unrar(File target, File tmpRar, TaskListener listener) {
 		listener.getLogger().println(
 				"----- TROUBLESHOOTING - 3/3 Final unrar entered.");
 		Archive arch = null;
-//		
-//		try{
-//			arch = new Archive(tmpRar);
-//		}catch(Exception r){
-//			
-//		}
 		
-		try {
-			arch = new Archive(tmpRar);
-			if (arch != null) {
-				if (arch.isEncrypted()) {
-					listener.getLogger()
-							.println(
-									"----- TROUBLESHOOTING - Archive encrypted. Extraction aborted.");
-					return;
-				}
-				FileHeader fh = arch.nextFileHeader();
-				while (fh != null) {
-					
-					if (fh.isEncrypted()) {
-						listener.getLogger().println(
-								"----- TROUBLESHOOTING - Encrypted file in the archive. File: "
-										+ fh.getFileNameString());
-						continue;
-					}
-
-					listener.getLogger().println(
-							"----- TROUBLESHOOTING - Extracting: " + fh.getFileNameString());
-					File f = new File(target, fh.getFileNameString());
-					if (fh.isDirectory()) {
-						/* Next in line is a folder -> create a directory */
+		// Code below makes the installer not visible in Jenkins.
+		// Problem with the JUnrar lib probably.
+//		try {
+//			arch = new Archive(tmpRar);
+//			if (arch != null) {
+//				if (arch.isEncrypted()) {
+//					listener.getLogger()
+//							.println(
+//									"----- TROUBLESHOOTING - Archive encrypted. Extraction aborted.");
+//					return;
+//				}
+//				FileHeader fh = arch.nextFileHeader();
+//				while (fh != null) {
+//					
+//					if (fh.isEncrypted()) {
+//						listener.getLogger().println(
+//								"----- TROUBLESHOOTING - Encrypted file in the archive. File: "
+//										+ fh.getFileNameString());
+//						continue;
+//					}
+//
+//					listener.getLogger().println(
+//							"----- TROUBLESHOOTING - Extracting: " + fh.getFileNameString());
+//					File f = new File(target, fh.getFileNameString());
+//					if (fh.isDirectory()) {
+//						/* Next in line is a folder -> create a directory */
 //						mkdirs(f);
-						// createDirectory(fh, destination);
-					} else {
-						/* Next in line is a file -> create a file */
-						File p = f.getParentFile();
-						if(p != null){
+//					} else {
+//						/* Next in line is a file -> create a file */
+//						File p = f.getParentFile();
+//						if(p != null){
 //							mkdirs(p);
-						}
-						
-						InputStream input = arch.getInputStream(fh);
-						try {
+//						}
+//						
+//						InputStream input = arch.getInputStream(fh);
+//						try {
 //	                        IOUtils.copy(input, writing(f));
-	                    } finally {
-	                        input.close();
-	                    }
-						// File f = createFile(fh, destination);
-						// OutputStream stream = new FileOutputStream(f);
-						// arch.extractFile(fh, stream);
-						// stream.close();
-					}
-					f.setLastModified(fh.getCTime().getTime());		// Possibly wrong call from 'fh'. (getCtime/getMTime/getATime)
-					fh = arch.nextFileHeader();
-				}
-			}
-		} catch (IOException e) {
-			/* --- Handle exception --- */
-		} catch (RarException e) {
-			/* --- Handle exception --- */
-		}
+//	                    } finally {
+//	                        input.close();
+//	                    }
+//						// File f = createFile(fh, destination);
+//						// OutputStream stream = new FileOutputStream(f);
+//						// arch.extractFile(fh, stream);
+//						// stream.close();
+//					}
+//					f.setLastModified(fh.getCTime().getTime());		// Possibly wrong call from 'fh'. (getCtime/getMTime/getATime)
+//					fh = arch.nextFileHeader();
+//				}
+//			}
+//		} catch (IOException e) {
+//			/* --- Handle exception --- */
+//		} catch (RarException e) {
+//			/* --- Handle exception --- */
+//		}
 	}
 
+	// Source: hudson.tools.FilePath.java
 	private boolean mkdirs(File dir) {
         if (dir.exists())   return false;
 
@@ -328,6 +333,7 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
         return dir.mkdirs();
     }
 	
+	// Source: hudson.tools.FilePath.java
 	/**
      * Pass through 'f' after ensuring that we can write to that file.
      */
@@ -339,17 +345,21 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
         return f;
     }
 	
+	// Source: hudson.tools.FilePath.java
 	private @Nonnull SoloFilePathFilter filterNonNull() {
 		return filter != null ? filter : UNRESTRICTED;
 	}
 
+	// Source: hudson.tools.FilePath.java
 	private static final SoloFilePathFilter UNRESTRICTED = SoloFilePathFilter.wrap(FilePathFilter.UNRESTRICTED);
 	 
+	// Source: hudson.tools.FilePath.java
 	/* Might need to normalize the path, keep this in mind */
 	private static String normalize(String path) {
 		return "";
 	}
 
+	// Source: hudson.tools.FilePath.java
 	/**
 	 * {@link FileCallable}s that can be executed anywhere, including the
 	 * master.
@@ -362,6 +372,7 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 		private static final long serialVersionUID = 1L;
 	}
 
+	// Source: hudson.tools.FilePath.java
 	/**
 	 * Executes some program on the machine that this {@link FilePath} exists,
 	 * so that one can perform local file operations.
@@ -371,6 +382,7 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 		return act(callable, callable.getClass().getClassLoader());
 	}
 
+	// Source: hudson.tools.FilePath.java
 	private <T> T act(final SecureFileCallable<T> callable, ClassLoader cl)
 			throws IOException, InterruptedException {
 		if (channel != null) {
@@ -401,6 +413,7 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 		}
 	}
 
+	// Source: hudson.tools.FilePath.java
 	/**
 	 * Code that gets executed on the machine where the {@link FilePath} is
 	 * local. Used to act on {@link FilePath}. <strong>Warning:</code>
@@ -433,6 +446,7 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 				InterruptedException;
 	}
 
+	// Source: hudson.tools.FilePath.java
 	/**
 	 * This extension point allows to contribute a wrapper around a fileCallable
 	 * so that a plugin can "intercept" a call.
@@ -452,6 +466,7 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 
 	}
 
+	// Source: hudson.tools.FilePath.java
 	/**
 	 * Adapts {@link FileCallable} to {@link Callable}.
 	 */
@@ -494,6 +509,7 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 		private static final long serialVersionUID = 1L;
 	}
 
+	// Source: hudson.tools.FilePath.java
 	/**
 	 * Used to tunnel {@link InterruptedException} over a Java signature that
 	 * only allows {@link IOException}
@@ -506,14 +522,17 @@ public class RarExtractionInstaller extends AbstractExtraToolInstaller {
 		private static final long serialVersionUID = 1L;
 	}
 
-	/* --- Added a cast to ExecutorService here ---*/
+	// Source: hudson.tools.FilePath.java
+	/* --- Added a cast to ExecutorService here. Gave error otherwise. ---*/
 	private static final ExecutorService threadPoolForRemoting = (ExecutorService) new ContextResettingExecutorService (
 			Executors.newCachedThreadPool(new ExceptionCatchingThreadFactory(
 					new NamingThreadFactory(new DaemonThreadFactory(),
 							"FilePath.localPool"))));
 
+	// Source: hudson.tools.FilePath.java
 	public static LocalChannel localChannel = new LocalChannel(
 			threadPoolForRemoting);
+
 
 	@Extension
 	public static class DescriptorImpl extends
