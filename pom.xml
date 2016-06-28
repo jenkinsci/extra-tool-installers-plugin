@@ -9,7 +9,7 @@
 
     <groupId>com.synopsys.arc.jenkinsci</groupId>
     <artifactId>extra-tool-installers</artifactId>
-    <version>0.3</version>
+    <version>0.4-SNAPSHOT</version>
     <name>Jenkins Extra Tool Installers Plugin</name>
     <description>Provides additional tool installers</description>
     <packaging>hpi</packaging>
@@ -35,47 +35,23 @@
     </pluginRepositories>
 
     <dependencies>
-	<dependency>
-	    <groupId>com.github.junrar</groupId>
-	    <artifactId>junrar</artifactId>
-	    <version>0.7</version>
-	</dependency>
+        <dependency>
+            <groupId>com.github.junrar</groupId>
+            <artifactId>junrar</artifactId>
+            <version>0.7</version>
+        </dependency>
 
-	<dependency>
+        <dependency>
             <groupId>org.jenkins-ci.main</groupId>
-            <artifactId>remoting</artifactId>
-            <version>2.59</version>
-	</dependency>
+            <artifactId>jenkins-core</artifactId>
+            <version>1.647</version>
+        </dependency>
 
-	<dependency>
-	    <groupId>org.eclipse.hudson</groupId>
-	    <artifactId>hudson-cli</artifactId>
-	    <version>3.2.1</version>
-	</dependency>
-
-	<dependency>
-	    <groupId>org.eclipse.hudson</groupId>
-	    <artifactId>hudson-remoting</artifactId>
-	    <version>3.0.3</version>
-	</dependency>
-
-	<dependency>
-	    <groupId>org.jenkins-ci.plugins</groupId>
-	    <artifactId>matrix-project</artifactId>
-	    <version>1.6</version>
-	</dependency>
-
-	<dependency>
-	    <groupId>org.jenkins-ci.main</groupId>
-	    <artifactId>jenkins-core</artifactId>
-	    <version>1.647</version>
-	</dependency>
-
-	<dependency>
-	    <groupId>org.eclipse.hudson</groupId>
-	    <artifactId>hudson-core</artifactId>
-	    <version>3.3.3</version>
-	</dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>matrix-project</artifactId>
+            <version>1.6</version>
+        </dependency>
     </dependencies>
 
     <developers>
