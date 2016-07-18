@@ -8,7 +8,6 @@ Contributors
 --------
 1. [Oleg Nenashev][2], Synopsys Inc., www.synopsys.com
 
-2. Martin Hjelmqvist  
 Features
 --------
 Plugin provides following installers:
