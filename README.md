@@ -7,6 +7,7 @@ You can find more info on [plugin's Wiki page][4].
 Contributors
 --------
 1. [Oleg Nenashev][2], Synopsys Inc., www.synopsys.com
+2. [Martin Hjelmqvist][5]
 
 Features
 --------
@@ -14,6 +15,7 @@ Plugin provides following installers:
 * Batch command installer (for tool installation at Windows)
 * "Install from specified folder" - setup without any actions (ex, "installation" from a shared directory)
 * Installer stubs: warning and errors for improper labels
+* Rar extraction installer - unpack rar files, just like the ZipExtractionInstaller
 
 License
 --------
@@ -23,3 +25,4 @@ License
 [2]: https://github.com/oleg-nenashev
 [3]: http://www.jenkinsci.org/
 [4]: https://wiki.jenkins-ci.org/display/JENKINS/Extra+Tool+Installers+Plugin
+[5]: https://github.com/Preyfix
