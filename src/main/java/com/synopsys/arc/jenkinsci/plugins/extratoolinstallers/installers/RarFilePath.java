@@ -3,9 +3,14 @@
  * 
  * Copyright (c) 2004-2010, Sun Microsystems, Inc., Kohsuke Kawaguchi,
  * Eric Lefevre-Ardant, Erik Ramfelt, Michael B. Donohue, Alan Harder,
+<<<<<<< HEAD
  * Manufacture Francaise des Pneumatiques Michelin, Romain Seguy,
  * Martin Hjelmqvist
  *
+=======
+ * Manufacture Francaise des Pneumatiques Michelin, Romain Seguy
+ * 
+>>>>>>> e8520f80c9453fea5d070581b19a4b3650da04a8
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
@@ -27,10 +32,15 @@
 package com.synopsys.arc.jenkinsci.plugins.extratoolinstallers.installers;
 
 /**
+<<<<<<< HEAD
  * A version of FilePath modified to extract RAR files instead of ZIP and TAR.GZ. 
  * Intended to fit the needs of the RarExtractionInstaller. 
  * Inspired by FilePath in the Hudson core.
  *
+=======
+ * 
+ * Inspired by FilePath in the Hudson core.
+>>>>>>> e8520f80c9453fea5d070581b19a4b3650da04a8
  * @author Martin Hjelmqvist <martin@hjelmqvist.eu>.
  */
 import com.github.junrar.testutil.ExtractArchive;
@@ -48,6 +58,10 @@ import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+<<<<<<< HEAD
+=======
+import java.util.Date;
+>>>>>>> e8520f80c9453fea5d070581b19a4b3650da04a8
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import jenkins.MasterToSlaveFileCallable;
@@ -66,6 +80,7 @@ public class RarFilePath implements Serializable {
         return dir.act(callable);
     }
 
+<<<<<<< HEAD
     /**
      * Given a rar file, extracts it to the given target directory, if necessary.
      *
@@ -84,6 +99,8 @@ public class RarFilePath implements Serializable {
      * @param message a message to be printed in case extraction will proceed.
      * @return true if the archive was extracted, false if the extraction was skipped because the target directory was considered up to date or an error occurred.
      */
+=======
+>>>>>>> e8520f80c9453fea5d070581b19a4b3650da04a8
     public boolean installIfNecessaryFrom(@Nonnull URL archive, @CheckForNull TaskListener listener, @Nonnull String message) throws IOException, InterruptedException {
         try {
             FilePath timestamp = dir.child(".timestamp");
@@ -150,9 +167,13 @@ public class RarFilePath implements Serializable {
             InputStream in = archive.getProtocol().startsWith("http") ? ProxyConfiguration.getInputStream(archive) : con.getInputStream();
             CountingInputStream cis = new CountingInputStream(in);
             try {
+<<<<<<< HEAD
                 if (archive.toExternalForm().endsWith(".rar")) {
                     unrarFrom(cis);
                 }
+=======
+                unrarFrom(cis);
+>>>>>>> e8520f80c9453fea5d070581b19a4b3650da04a8
             } catch (IOException e) {
                 throw new IOException(String.format("Failed to unpack %s (%d bytes read of total %d)",
                         archive, cis.getByteCount(), con.getContentLength()), e);
@@ -206,6 +227,7 @@ public class RarFilePath implements Serializable {
         }
     }
 
+<<<<<<< HEAD
     /**
      * Converts the InputStream to a file, then performs the extraction into the file 'target' using the JUnrar library.
      * 
@@ -220,18 +242,42 @@ public class RarFilePath implements Serializable {
         try {
             IOUtils.copy(inRar, archive);
             unrar(target, archive);
+=======
+    private void unrar(File dir, InputStream inRar)
+            throws IOException {
+        File archive = File.createTempFile("tmprar", null);
+
+        try {
+            IOUtils.copy(inRar, archive);
+            unrar(dir, archive);
+>>>>>>> e8520f80c9453fea5d070581b19a4b3650da04a8
         } finally {
             archive.delete();
         }
     }
 
     /**
+<<<<<<< HEAD
      * Performs the extraction specified archive file into the file 'target' using the JUnrar library.
+=======
+     * Performs the extraction of 'archive' into the file 'target' using the
+     * JUnrar library.
+>>>>>>> e8520f80c9453fea5d070581b19a4b3650da04a8
      *
      * @param target Where the tool will be installed.
      * @param archive RAR file to be extracted.
      */
     private void unrar(File target, File archive) {
+<<<<<<< HEAD
         ExtractArchive.extractArchive(archive, target);
     }
+=======
+        ExtractArchive extractor = new ExtractArchive();
+        extractor.extractArchive(archive, target);
+        Date date = new Date();
+//        Check whether this is necessary.
+        target.setLastModified(date.getTime());
+    }
+
+>>>>>>> e8520f80c9453fea5d070581b19a4b3650da04a8
 }
