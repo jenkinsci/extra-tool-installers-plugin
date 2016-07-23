@@ -75,7 +75,6 @@
             <artifactId>junrar</artifactId>
             <version>0.7</version>
         </dependency>
-<<<<<<< HEAD
         <dependency>
             <groupId>com.cloudbees.jenkins.plugins</groupId>
             <artifactId>custom-tools-plugin</artifactId>
@@ -85,7 +84,3 @@
         </dependency>
     </dependencies>
 </project>
-=======
-    </dependencies>
-</project>
->>>>>>> e8520f80c9453fea5d070581b19a4b3650da04a8

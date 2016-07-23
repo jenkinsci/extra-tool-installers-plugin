@@ -49,5 +49,6 @@ public class RarFilePathTest {
         final RarFilePath d = new RarFilePath(new FilePath(temp.getRoot()));
         final URL toolHome = getClass().getResource("testArchive.rar");
         assertTrue("No installation performed.", d.installIfNecessaryFrom(toolHome, null, "Unpacking " + toolHome.toString() + " to " + temp.getRoot().toString()));
+        temp.delete();
     }
 }
