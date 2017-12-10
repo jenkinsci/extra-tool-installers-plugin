@@ -27,8 +27,8 @@ import hudson.tools.ToolInstaller;
 import java.io.IOException;
 
 /**
- *
- * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Just an exception type for issues happening in the plugin.
+ * @author Oleg Nenashev
  */
 public class ExtraToolInstallersException extends IOException {
     ToolInstaller installer;

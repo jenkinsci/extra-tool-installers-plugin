@@ -31,7 +31,7 @@ import hudson.tools.ToolInstaller;
 
 /**
  * Abstract class, which encapsulates common methods for installers.
- * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * @author Oleg Nenashev
  * @since 0.2.1
  */
 public abstract class AbstractExtraToolInstaller extends ToolInstaller {

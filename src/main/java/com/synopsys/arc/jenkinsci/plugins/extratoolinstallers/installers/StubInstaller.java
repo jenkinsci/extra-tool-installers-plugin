@@ -39,7 +39,7 @@ import org.kohsuke.stapler.QueryParameter;
 /**
  * Stub installer, which doesn't perform installation.
  * Can be used in order to notify users about unsupported platform (and optionally fail the build)
- * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * @author Oleg Nenashev
  * @since 0.2
  */
 public class StubInstaller extends AbstractExtraToolInstaller {

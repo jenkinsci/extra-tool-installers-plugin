@@ -38,7 +38,7 @@ import org.kohsuke.stapler.QueryParameter;
 /**
  * Installs tool from shared directory.
  * Actually, this installer doesn't perform any actions.
- * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * @author Oleg Nenashev
  */
 public class SharedDirectoryInstaller extends AbstractExtraToolInstaller {
 

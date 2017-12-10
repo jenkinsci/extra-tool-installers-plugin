@@ -1,25 +1,18 @@
-Extra Tool Installers
+Extra Tool Installers Plugin for Jenkins
 ============================
 
-[Jenkins][3] plugin. Provides additional tool installers.
-You can find more info on [plugin's Wiki page][4].
-
-Contributors
---------
-1. [Oleg Nenashev][2], Synopsys Inc., www.synopsys.com
+This plugin provides additional tool installers for Jenkins.
+You can find more info on the [plugin's page](https://plugins.jenkins.io/extra-tool-installers).
 
 Features
 --------
-Plugin provides following installers:
-* Batch command installer (for tool installation at Windows)
+
+* Batch command installer for tool installations on Windows. 
+  * `@Deprecated`. Jenkins Core supports such installer since 1.549 (see [JENKINS-21202](https://issues.jenkins-ci.org/browse/JENKINS-21202))
 * "Install from specified folder" - setup without any actions (ex, "installation" from a shared directory)
-* Installer stubs: warning and errors for improper labels
+* "Skip or fail installation" - prints warnings during the installation and/or fails the installation
+
 
 License
 --------
-[MIT License][1]
-
-[1]: http://www.opensource.org/licenses/mit-license.php
-[2]: https://github.com/oleg-nenashev
-[3]: http://www.jenkinsci.org/
-[4]: https://wiki.jenkins-ci.org/display/JENKINS/Extra+Tool+Installers+Plugin
+[MIT License][http://www.opensource.org/licenses/mit-license.php]
