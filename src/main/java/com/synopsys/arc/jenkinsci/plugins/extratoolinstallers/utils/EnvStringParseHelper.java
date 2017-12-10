@@ -21,6 +21,11 @@ import hudson.model.Node;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
 import hudson.slaves.NodeProperty;
 import hudson.tools.ToolInstaller;
+import jenkins.model.Jenkins;
+
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Provides parsing of environment variables in input string.
@@ -44,8 +49,9 @@ public class EnvStringParseHelper {
         }    
         return environment.expand(macroString);     
     }
-        
-    public static String substituteNodeVariables(String macroString, Node node) {
+
+    @Nullable
+    public static String substituteNodeVariables(@CheckForNull String macroString, @Nonnull Node node) {
         if (macroString == null) return null;
         if (!macroString.contains("${")) {
             return macroString;
@@ -58,7 +64,7 @@ public class EnvStringParseHelper {
         }    
         
         // Substitute global variables
-        for (NodeProperty<?> entry : Hudson.getInstance().getGlobalNodeProperties()) {
+        for (NodeProperty<?> entry : Jenkins.getActiveInstance().getGlobalNodeProperties()) {
             substitutedString = substituteNodeProperty(substitutedString, entry);
         } 
         

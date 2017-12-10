@@ -58,7 +58,7 @@ public abstract class AbstractExtraToolInstaller extends ToolInstaller {
      * @param macroString String to be checked
      * @param node Node, where tool is being installed
      * @return Substituted string
-     * @throws ExtraToolInstallersException 
+     * @throws ExtraToolInstallersException Substitution error
      */
     protected String substituteNodeVariablesValidated(String stringName, String macroString, Node node) 
             throws ExtraToolInstallersException {

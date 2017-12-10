@@ -26,6 +26,7 @@ package com.synopsys.arc.jenkinsci.plugins.extratoolinstallers.installers;
 import com.synopsys.arc.jenkinsci.plugins.extratoolinstallers.utils.ExtraToolInstallersException;
 import hudson.Extension;
 import hudson.FilePath;
+import hudson.RestrictedSince;
 import hudson.model.Node;
 import hudson.model.TaskListener;
 import hudson.tools.CommandInstaller;
@@ -33,6 +34,9 @@ import hudson.tools.ToolInstallation;
 import hudson.tools.ToolInstallerDescriptor;
 import hudson.util.FormValidation;
 import java.io.IOException;
+
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -88,6 +92,8 @@ public class StubInstaller extends AbstractExtraToolInstaller {
             return Messages.StubInstaller_displayName();
         }
 
+        @Restricted(NoExternalUse.class)
+        @RestrictedSince("0.4")
         public FormValidation doCheckMessage(@QueryParameter String value) {
             if (value.length() > 0) {
                 return FormValidation.ok();
