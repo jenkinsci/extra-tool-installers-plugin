@@ -3,10 +3,10 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>1.480.3</version>
+        <version>2.37</version>
     </parent>
 
-    <groupId>com.synopsys.arc.jenkinsci</groupId>
+    <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>extra-tool-installers</artifactId>
     <version>0.4-SNAPSHOT</version>
     <name>Jenkins Extra Tool Installers Plugin</name>
@@ -15,34 +15,31 @@
     <url>https://wiki.jenkins-ci.org/display/JENKINS/Extra+Tool+Installers+Plugin</url>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jenkins.version>1.651.3</jenkins.version>
+        <java.level>7</java.level>
     </properties>
 
     <repositories>
         <repository>
             <id>repo.jenkins-ci.org</id>
-            <url>http://repo.jenkins-ci.org/public/</url>
+            <url>https://repo.jenkins-ci.org/public/</url>
         </repository>
     </repositories>
 
     <pluginRepositories>
         <pluginRepository>
             <id>repo.jenkins-ci.org</id>
-            <url>http://repo.jenkins-ci.org/public/</url>
+            <url>https://repo.jenkins-ci.org/public/</url>
         </pluginRepository>
     </pluginRepositories>
 
     <developers>
         <developer>
             <id>oleg_nenashev</id>
-            <name>Oleg Nenashev</name>
-            <email>nenashev@synopsys.com;o.v.nenashev@gmail.com</email>
-            <organizationUrl>http://www.synopsys.com</organizationUrl>
-            <organization>Synopsys Inc.</organization>              			
+            <name>Oleg Nenashev</name>            			
             <roles>
                 <role>maintainer</role>
             </roles>
-            <timezone>+4</timezone>
         </developer>
     </developers>
 
