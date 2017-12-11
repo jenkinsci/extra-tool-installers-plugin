@@ -31,7 +31,7 @@ import hudson.tools.ToolInstaller;
 
 /**
  * Abstract class, which encapsulates common methods for installers.
- * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * @author Oleg Nenashev
  * @since 0.2.1
  */
 public abstract class AbstractExtraToolInstaller extends ToolInstaller {
@@ -58,7 +58,7 @@ public abstract class AbstractExtraToolInstaller extends ToolInstaller {
      * @param macroString String to be checked
      * @param node Node, where tool is being installed
      * @return Substituted string
-     * @throws ExtraToolInstallersException 
+     * @throws ExtraToolInstallersException Substitution error
      */
     protected String substituteNodeVariablesValidated(String stringName, String macroString, Node node) 
             throws ExtraToolInstallersException {

@@ -38,9 +38,11 @@ import org.kohsuke.stapler.QueryParameter;
 
 /**
  * Installs tool via script execution of Batch script.
- * Inspired by "Command installer" from the Jenkins core.
+ * Inspired by the {@link hudson.tools.CommandInstaller} from the Jenkins core.
  * @since 0.1
+ * @deprecated {@link hudson.tools.BatchCommandInstaller} is now available in the core.
  */
+@Deprecated
 public class BatchCommandInstaller extends AbstractExtraToolInstaller {
 
     /**

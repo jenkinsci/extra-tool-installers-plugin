@@ -25,6 +25,7 @@ package com.synopsys.arc.jenkinsci.plugins.extratoolinstallers.installers;
 
 import hudson.Extension;
 import hudson.FilePath;
+import hudson.RestrictedSince;
 import hudson.model.Node;
 import hudson.model.TaskListener;
 import hudson.tools.CommandInstaller;
@@ -32,13 +33,16 @@ import hudson.tools.ToolInstallation;
 import hudson.tools.ToolInstallerDescriptor;
 import hudson.util.FormValidation;
 import java.io.IOException;
+
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
 /**
- * Installs tool from shared directory.
+ * Installs tool from a shared directory.
  * Actually, this installer doesn't perform any actions.
- * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * @author Oleg Nenashev
  */
 public class SharedDirectoryInstaller extends AbstractExtraToolInstaller {
 
@@ -62,6 +66,8 @@ public class SharedDirectoryInstaller extends AbstractExtraToolInstaller {
             return Messages.SharedDirectoryInstaller_DescriptorImpl_displayName();
         }
 
+        @Restricted(NoExternalUse.class)
+        @RestrictedSince("0.4")
         public FormValidation doCheckToolHome(@QueryParameter String value) {
             if (value.length() > 0) {
                 return FormValidation.ok();

@@ -21,10 +21,15 @@ import hudson.model.Node;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
 import hudson.slaves.NodeProperty;
 import hudson.tools.ToolInstaller;
+import jenkins.model.Jenkins;
+
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Provides parsing of environment variables in input string.
- * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * @author Oleg Nenashev
  * @since 0.3
  */
 public class EnvStringParseHelper {
@@ -34,7 +39,7 @@ public class EnvStringParseHelper {
      * Resolves tools installation directory using global variables.
      * @param environment Collection of environment variables
      * @param macroString Input path with macro calls
-     * @return Raw string
+     * @return  Raw string
      * @since 0.3
      */
     public static String substituteEnvVars(String macroString, EnvVars environment)  {
@@ -44,8 +49,9 @@ public class EnvStringParseHelper {
         }    
         return environment.expand(macroString);     
     }
-        
-    public static String substituteNodeVariables(String macroString, Node node) {
+
+    @Nullable
+    public static String substituteNodeVariables(@CheckForNull String macroString, @Nonnull Node node) {
         if (macroString == null) return null;
         if (!macroString.contains("${")) {
             return macroString;
@@ -58,7 +64,7 @@ public class EnvStringParseHelper {
         }    
         
         // Substitute global variables
-        for (NodeProperty<?> entry : Hudson.getInstance().getGlobalNodeProperties()) {
+        for (NodeProperty<?> entry : Jenkins.getActiveInstance().getGlobalNodeProperties()) {
             substitutedString = substituteNodeProperty(substitutedString, entry);
         } 
         
@@ -86,13 +92,12 @@ public class EnvStringParseHelper {
     /**
      * Resolves tools installation directory using global variables.
      * @param macroString Input path with macro calls
-     * @return Raw string
      * @throws ExtraToolInstallersException String validation failed (there are unresolved variables)
      * @since 0.3
      */
     public static void checkStringForMacro(ToolInstaller installer, String stringName, String macroString) 
             throws ExtraToolInstallersException {     
-        // Check consistensy and throw errors
+        // Check consistency and throw errors
         if (macroString.contains("${")) {
            throw new ExtraToolInstallersException(installer, "Can't resolve all variables in "+stringName+" string. Final state: "+macroString);
         } 
