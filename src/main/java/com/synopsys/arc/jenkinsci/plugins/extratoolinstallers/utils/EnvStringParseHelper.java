@@ -16,7 +16,6 @@
 package com.synopsys.arc.jenkinsci.plugins.extratoolinstallers.utils;
 
 import hudson.EnvVars;
-import hudson.model.Hudson;
 import hudson.model.Node;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
 import hudson.slaves.NodeProperty;
@@ -34,7 +33,7 @@ import javax.annotation.Nullable;
  */
 public class EnvStringParseHelper {
     private EnvStringParseHelper() {};
-    
+
     /**
      * Resolves tools installation directory using global variables.
      * @param environment Collection of environment variables
@@ -46,31 +45,38 @@ public class EnvStringParseHelper {
         if (macroString == null) return null;
         if (!macroString.contains("${")) {
             return macroString;
-        }    
-        return environment.expand(macroString);     
+        }
+        return environment.expand(macroString);
     }
 
+    /**
+     * Substitutes string according to all node properties.
+     * @param macroString String to be substituted
+     * @param node Node whose properties provide available substitution
+     * @return Substituted string
+     */
     @Nullable
     public static String substituteNodeVariables(@CheckForNull String macroString, @Nonnull Node node) {
         if (macroString == null) return null;
         if (!macroString.contains("${")) {
             return macroString;
-        } 
-        
+        }
+
         // Check node properties
         String substitutedString = macroString;
         for (NodeProperty<?> entry : node.getNodeProperties()) {
             substitutedString = substituteNodeProperty(substitutedString, entry);
-        }    
-        
+        }
+
         // Substitute global variables
-        for (NodeProperty<?> entry : Jenkins.getActiveInstance().getGlobalNodeProperties()) {
+        final Jenkins jenkinsInstance = Jenkins.getInstance();
+        for (NodeProperty<?> entry : jenkinsInstance.getGlobalNodeProperties()) {
             substitutedString = substituteNodeProperty(substitutedString, entry);
-        } 
-        
+        }
+
         return substitutedString;
     }
-        
+
     /**
      * Substitutes string according to node property.
      * @param macroString String to be substituted
@@ -84,22 +90,24 @@ public class EnvStringParseHelper {
            EnvironmentVariablesNodeProperty prop = (EnvironmentVariablesNodeProperty)property;
            return substituteEnvVars(macroString, prop.getEnvVars());
         }
-        
+
         //TODO: add support of other configuration entries or propagate environments
         return macroString;
     }
-    
+
     /**
-     * Resolves tools installation directory using global variables.
-     * @param macroString Input path with macro calls
+     * Checks that all variables have been resolved.
+     * @param installer The installer that's doing the checking.
+     * @param stringName The human-friendly name of the string being checked.
+     * @param macroString The string contents that should be checked.
      * @throws ExtraToolInstallersException String validation failed (there are unresolved variables)
      * @since 0.3
      */
-    public static void checkStringForMacro(ToolInstaller installer, String stringName, String macroString) 
-            throws ExtraToolInstallersException {     
+    public static void checkStringForMacro(ToolInstaller installer, String stringName, String macroString)
+            throws ExtraToolInstallersException {
         // Check consistency and throw errors
         if (macroString.contains("${")) {
            throw new ExtraToolInstallersException(installer, "Can't resolve all variables in "+stringName+" string. Final state: "+macroString);
-        } 
+        }
     }
 }
