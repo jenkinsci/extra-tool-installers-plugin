@@ -26,6 +26,8 @@ package com.synopsys.arc.jenkinsci.plugins.extratoolinstallers.installers;
 
 import hudson.Extension;
 import hudson.FilePath;
+import hudson.model.Descriptor;
+import hudson.model.DescriptorVisibilityFilter;
 import hudson.model.Node;
 import hudson.model.TaskListener;
 import hudson.tasks.CommandInterpreter;
@@ -113,6 +115,19 @@ public class BatchCommandInstaller extends AbstractExtraToolInstaller {
             } else {
                 return FormValidation.error(Messages.BatchCommandInstaller_no_toolHome());
             }
+        }
+    }
+
+    /**
+     * Prevents the {@link BatchCommandInstaller} from being selectable for new
+     * installers.
+     */
+    @Extension
+    public static class BatchCommandInstallerDescriptorVisibilityFilter extends DescriptorVisibilityFilter {
+        @SuppressWarnings("rawtypes")
+        @Override
+        public boolean filter(Object context, Descriptor descriptor) {
+            return !(descriptor instanceof DescriptorImpl);
         }
     }
 }
