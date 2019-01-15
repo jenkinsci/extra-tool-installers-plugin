@@ -7,6 +7,7 @@ You can find more info on the [plugin's page](https://plugins.jenkins.io/extra-t
 Features
 --------
 
+* Batch command installer for tool installations on Windows supporting variable substitution.
 * "Install from specified folder" - setup without any actions (ex, "installation" from a shared directory)
 * "Skip or fail installation" - prints warnings during the installation and/or fails the installation
 
