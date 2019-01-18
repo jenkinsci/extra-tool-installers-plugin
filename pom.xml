@@ -15,8 +15,8 @@
     <url>https://wiki.jenkins.io/display/JENKINS/Extra+Tool+Installers+Plugin</url>
 
     <properties>
-        <jenkins.version>1.651.3</jenkins.version>
-        <java.level>7</java.level>
+        <jenkins.version>2.60.3</jenkins.version>
+        <java.level>8</java.level>
     </properties>
 
     <repositories>
@@ -47,8 +47,8 @@
         <connection>scm:git:ssh://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git</developerConnection>
         <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <licenses>
         <license>
