@@ -1,0 +1,8 @@
+<p>
+The number of attempts that will be made to loop through the specified list of installers.
+</p>
+<p>
+In the event that no installer succeeds during the first pass through the list, this allows the entire list to be attempted again, up to the limit specified.
+Zero or negative numbers are ignored: If a number less than 1 is specified then the number 1 will be used instead, so the list will always be attempted.
+</p>
+Note that this is cumulative with the "per installer" attempts, so if both are set to 3 then (in the event of repeated failure) an installer may be attempted 9 times.
