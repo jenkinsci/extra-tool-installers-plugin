@@ -516,8 +516,9 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
                 AuthenticatedDownloadCallable.downloadAndUnpack(uri, usernameOrNull, passwordOrNull,
                         timestampOfLocalContents, nodeName, whereToDownloadToOrNull, log);
             } catch (AuthenticatedDownloadCallable.HttpGetException ex) {
-                if (ex.getHttpStatusCode() != null) {
-                    final int httpStatusCode = ex.getHttpStatusCode().intValue();
+                final Integer httpStatusCodeOrNull = ex.getHttpStatusCode();
+                if (httpStatusCodeOrNull != null) {
+                    final int httpStatusCode = httpStatusCodeOrNull.intValue();
                     if (httpStatusCode == HttpStatus.SC_UNAUTHORIZED) {
                         if (usernameOrNull == null) {
                             return credentialProblem(checkUrl, FormValidation.error(ex,
