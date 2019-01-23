@@ -36,7 +36,14 @@
     <developers>
         <developer>
             <id>oleg_nenashev</id>
-            <name>Oleg Nenashev</name>            			
+            <name>Oleg Nenashev</name>
+            <roles>
+                <role>maintainer (retired)</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>pjdarton</id>
+            <name>Peter Darton</name>
             <roles>
                 <role>maintainer</role>
             </roles>
