@@ -1,0 +1,8 @@
+<p>
+The number of times each installer is tried, in a row, before the next one is attempted.
+</p>
+<p>
+If this is set to a number that is more than 1 then, in the event that an installer fails, it will will be retried up to the limit specified.
+If a number less than 1 is specified then the number 1 will be used instead, so each installer will be attempted at least once.
+</p>
+Note that this is cumulative with the "whole list" attempts, so if both are set to 3 then (in the event of repeated failure) an installer may be attempted 9 times.

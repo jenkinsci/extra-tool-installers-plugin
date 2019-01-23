@@ -12,6 +12,7 @@ Features
 * "Install from specified folder" - setup without any actions (ex, "installation" from a shared directory)
 * "Skip or fail installation" - prints warnings during the installation and/or fails the installation
 * "Authenticated download and unpack of a zip/tar.gz.
+* "Try any of ..." - try/retry multiple installers until one works.
 
 
 License
