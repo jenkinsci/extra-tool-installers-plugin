@@ -31,6 +31,7 @@ import java.io.IOException;
  * @author Oleg Nenashev
  */
 public class ExtraToolInstallersException extends IOException {
+    private static final long serialVersionUID = -6131475303804497293L;
     ToolInstaller installer;
     
     public ExtraToolInstallersException(ToolInstaller installer, String message) {
@@ -51,4 +52,4 @@ public class ExtraToolInstallersException extends IOException {
     public ToolInstaller getInstaller() {
         return installer;
     } 
-} 
+}
