@@ -1,7 +1,16 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:st="jelly:stapler" xmlns:t="/hudson/tools">
-    <f:property field="installers"/>
-    <f:advanced>
+    <tr>
+        <td class="setting-leftspace"><st:nbsp/></td>
+        <td class="setting-main" colspan="2">
+            <table>
+                <f:property field="installers"/>
+            </table>
+        </td>
+        <f:helpLink url="/descriptor/io.jenkins.plugins.extratoolinstallers.installers.AnyOfInstaller/help/installers" featureName="installers"/>
+    </tr>
+    <f:helpArea />
+    <f:advanced title="${%Retries}" align="left">
         <f:entry title="${%Number of times to attempt list of installers}" field="attemptsOfWholeList">
             <f:textbox clazz="required positive-number" default="1"/>
         </f:entry>
