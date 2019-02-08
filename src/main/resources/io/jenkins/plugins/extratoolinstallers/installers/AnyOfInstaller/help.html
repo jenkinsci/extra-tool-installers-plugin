@@ -1,0 +1,23 @@
+<div>
+  <p>
+    Attempts one or more installation methods in sequence, retrying if appropriate, until one method succeeds.
+    The installation will be declared an overall success once a method succeeds.
+  </p>
+  <p>
+    During an installation, any non-applicable installers
+    (e.g. labels not matching)
+    will be silently ignored.
+    The remainder will be reported on, including any retries.
+  </p>
+  <p>
+    In the event of a total failure
+    (after all applicable installers and all retries have been attempted),
+    the last failure failure exception will be fully logged and the build will fail.
+  </p>
+  <p>
+    e.g.
+    Specifying two nearly-identical Zip Extraction installers,
+    both downloading the same .zip file but from two different webservers,
+    will allow builds to continue if the first webserver is down/inaccessible etc.
+  </p>
+</div>
