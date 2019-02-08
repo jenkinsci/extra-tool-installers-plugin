@@ -501,11 +501,11 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
                 usernameOrNull = getUsernameFromCredentials(credentialsOrNull);
                 passwordOrNull = getPasswordFromCredentials(credentialsOrNull);
             }
-            final Long timestampOfLocalContents = null;
-            final String nodeName = "";
-            final FilePath whereToDownloadToOrNull = null;
-            final TaskListener log = null;
             try {
+                final Long timestampOfLocalContents = null;
+                final String nodeName = "";
+                final FilePath whereToDownloadToOrNull = null;
+                final TaskListener log = null;
                 /*
                  * System.out.println(
                  * "checkUrlAndCredentialsId:  DownloadIfNecessary.payload(" +
@@ -535,9 +535,9 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
                 }
                 return urlProblem(checkUrl, FormValidation.error(ex,
                         Messages.AuthenticatedZipExtractionInstaller_bad_http_response_from_server(ex.getMessage())));
-            } catch (IOException | InterruptedException ex) {
+            } catch (IOException | InterruptedException | RuntimeException ex) {
                 return urlProblem(checkUrl,
-                        FormValidation.error(ex, Messages.AuthenticatedZipExtractionInstaller_could_not_connect()));
+                        FormValidation.error(ex, Messages.AuthenticatedZipExtractionInstaller_could_not_connect(ex.toString())));
             }
             return FormValidation.ok();
         }
