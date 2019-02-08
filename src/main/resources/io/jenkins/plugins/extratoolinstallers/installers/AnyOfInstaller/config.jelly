@@ -1,7 +1,7 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:st="jelly:stapler" xmlns:t="/hudson/tools">
     <f:property field="installers"/>
-    <f:advanced>
+    <f:advanced title="${%Retries}" align="left">
         <f:entry title="${%Number of times to attempt list of installers}" field="attemptsOfWholeList">
             <f:textbox clazz="required positive-number" default="1"/>
         </f:entry>
