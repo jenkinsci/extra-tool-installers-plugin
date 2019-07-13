@@ -191,7 +191,7 @@ public class AnyOfInstaller extends ToolInstaller {
         for (final ToolInstaller installer : installers) {
             index++;
             if (installer.appliesTo(node)) {
-                allApplicableInstallersByIndex.put(Integer.valueOf(index), installer);
+                allApplicableInstallersByIndex.put(index, installer);
             }
         }
         return allApplicableInstallersByIndex;

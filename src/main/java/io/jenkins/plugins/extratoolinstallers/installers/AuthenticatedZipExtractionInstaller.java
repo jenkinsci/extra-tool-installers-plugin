@@ -162,8 +162,7 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
         final Long timestampOfLocalContents;
         final FilePath timestamp = dir.child(".timestamp");
         if (timestamp.exists()) {
-            final long lastModified = timestamp.lastModified();
-            timestampOfLocalContents = Long.valueOf(lastModified);
+            timestampOfLocalContents = timestamp.lastModified();
         } else {
             timestampOfLocalContents = null;
         }
