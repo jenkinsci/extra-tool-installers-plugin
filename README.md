@@ -1,11 +1,9 @@
-Extra Tool Installers Plugin for Jenkins
-============================
+# Extra Tool Installers Plugin for Jenkins
 
 This plugin provides additional tool installers for Jenkins.
 You can find more info on the [plugin's page](https://plugins.jenkins.io/extra-tool-installers).
 
-Features
---------
+## Features
 
 * Batch command installer for Windows that supports Jenkins variable substitution.
 * "Install from specified folder" - setup without any actions (ex, "installation" from a shared directory)
@@ -13,7 +11,6 @@ Features
 * "Authenticated download and unpack of a zip/tar.gz.
 * "Try any of ..." - try/retry multiple installers until one works.
 
+## License
 
-License
---------
 [MIT License](http://www.opensource.org/licenses/mit-license.php)
