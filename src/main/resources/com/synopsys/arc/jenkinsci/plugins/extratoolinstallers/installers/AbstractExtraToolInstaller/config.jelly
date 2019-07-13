@@ -27,7 +27,7 @@ THE SOFTWARE.
         <f:textbox/>
     </f:entry>
     <f:entry title="${%Substitution}" field="failOnSubstitution">
-        <f:checkbox title="Fail the build if substituton fails"/>
+        <f:checkbox title="Fail the build if substitution fails"/>
         <f:description>Fails the installation of the tool and further operations</f:description>
     </f:entry> 
 </j:jelly>

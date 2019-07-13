@@ -361,7 +361,7 @@ public class AnyOfInstallerTest {
     /////////////////////////////////////////////////////////////////
 
     /**
-     * Creates a {@link FilePath} we can return from a successfull installation.
+     * Creates a {@link FilePath} we can return from a successful installation.
      */
     private static FilePath stubFilePath() {
         return new FilePath(new File("/"));
