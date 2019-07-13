@@ -432,8 +432,6 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
          *            problem. If false then we should only return credential
          *            problems and just return {@link FormValidation#ok()} if
          *            there's a URL problem.
-         * @param item
-         *            Context for overall configuration permission check.
          * @param credentialsIdOrNull
          *            The credentials to check.
          * @param urlOrNull
