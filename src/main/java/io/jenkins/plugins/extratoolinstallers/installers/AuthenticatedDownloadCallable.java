@@ -50,7 +50,7 @@ class AuthenticatedDownloadCallable extends MasterToSlaveFileCallable<Date> {
     /**
      * Passed to {@link FilePath#act(hudson.FilePath.FileCallable)} in order to
      * run
-     * {@link #doDownload(GetMethod, FilePath, TaskListener, URI, String, String)}
+     * {@link #doDownload(HttpMethodBase, FilePath, TaskListener, URI, String, String)}
      * on a remote node.
      * 
      * @param uri

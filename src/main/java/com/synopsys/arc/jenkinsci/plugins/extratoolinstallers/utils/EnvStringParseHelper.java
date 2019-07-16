@@ -32,7 +32,7 @@ import javax.annotation.Nullable;
  * @since 0.3
  */
 public class EnvStringParseHelper {
-    private EnvStringParseHelper() {};
+    private EnvStringParseHelper() {}
 
     /**
      * Resolves tools installation directory using global variables.

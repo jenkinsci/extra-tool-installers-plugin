@@ -191,7 +191,7 @@ public class AnyOfInstaller extends ToolInstaller {
         for (final ToolInstaller installer : installers) {
             index++;
             if (installer.appliesTo(node)) {
-                allApplicableInstallersByIndex.put(Integer.valueOf(index), installer);
+                allApplicableInstallersByIndex.put(index, installer);
             }
         }
         return allApplicableInstallersByIndex;
@@ -218,7 +218,7 @@ public class AnyOfInstaller extends ToolInstaller {
 
     /**
      * Logs a message to the build log, indicating the point in our proceedings
-     * that the message relates to, using as little text as possile to do it.
+     * that the message relates to, using as little text as possible to do it.
      */
     private static void logAttempt(final TaskListener log, final String whatToReport, final int wholeListAttempt,
             final int maxWholeListAttempts, final int numberOfConfiguredOfInstallers,
