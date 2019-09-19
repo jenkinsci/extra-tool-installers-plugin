@@ -1,9 +1,12 @@
 # General
 
-- Please do not use the issue tracker to ask questions, join jenkins-users mailing list.
+- Please do not use the issue tracker to ask questions.
 This facility is for reporting (and fixing) bugs in the code.
 If you're not 100% sure it's a bug in the code then please seek help elsewhere.
-- [RTFM](https://en.wikipedia.org/wiki/RTFM). The Jenkins UI pages include help that should explain things. The [the plugin's wiki page](https://wiki.jenkins.io/display/JENKINS/Extra+Tool+Installers+Plugin) gives additional information.
+e.g. the [jenkins-users google group](https://groups.google.com/forum/#!forum/jenkinsci-users).
+- [RTFM](https://en.wikipedia.org/wiki/RTFM).
+The Jenkins UI pages include help that should explain things.
+The [plugin's wiki page](https://wiki.jenkins.io/display/JENKINS/Extra+Tool+Installers+Plugin) gives additional information.
 - Be helpful and make no demands.
   * This code is Free Open-Source Software - nobody is obliged to make things work for you *but* you have legal permission to fix things yourself.
   * If you're reporting and fixing an issue yourself then you only need to explain what problem you're fixing in enough detail that the maintainer(s) can understand why your changes are in the public interest.
