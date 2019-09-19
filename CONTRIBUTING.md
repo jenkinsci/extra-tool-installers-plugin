@@ -9,7 +9,12 @@ If you're not 100% sure it's a bug in the code then please seek help elsewhere.
   * If you're reporting and fixing an issue yourself then you only need to explain what problem you're fixing in enough detail that the maintainer(s) can understand why your changes are in the public interest.
   * If you're relying on someone else to fix a problem then you should to make it as easy as possible for others to fix it for you, and you should test any fixes provided.
 
-# Creating new issue
+# Legal conditions
+
+- Any contributions (code, information etc) submitted will be subject to the same license as the rest of the code. No new restrictions/conditions are permitted.
+- As a contributor, you MUST have the legal right to grant permission for the contribution to be used under these conditions.
+
+# Reporting a new issue
 
 - Provide a full description of the issue you are facing.
   * What are you trying to do?
@@ -22,14 +27,11 @@ If you're not 100% sure it's a bug in the code then please seek help elsewhere.
   * Note that sensitive information may be visible in logs, so take care to redact logs where necessary.
 - Ensure that any code or log example surround with [the right markdown](https://help.github.com/articles/github-flavored-markdown/) otherwise it'll be unreadable.
 
-# For pull requests
+# Submitting pull requests
 
-- Legal notice:
-  * Any code submitted will be subject to the same license as the rest of the code. No new restrictions/conditions are permitted.
-  * As a contributor, you MUST have the legal right to grant permission for the contribution to be used under these conditions.
 - A PR's description must EITHER refer to an existing issue (either in github or on Jenkins JIRA) OR include a full description as for "Creating new issue".
 - A single PR should EITHER be making functional changes OR making (non-functional) cosmetic/refactoring changes to the code.
-Please do not do both in the same PR or it makes life difficult for anyone else merging your changes.
+Please do not do both in the same PR as this makes life difficult for anyone else merging your changes.
 - For functional-change PRs, keep changes to a minimum (to make merges easier).
 - Clean build & test:
   * Any submitted PRs should automatically get built and tested; PRs will not be considered for merger until they are showing a clean build.
