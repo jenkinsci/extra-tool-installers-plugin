@@ -1,6 +1,9 @@
-# Extra Tool Installers Plugin for Jenkins
+# Extra Tool Installers plugin for Jenkins
 
 This plugin provides additional tool installers for Jenkins.
+
+[![Build Status](https://ci.jenkins.io/job/Plugins/job/extra-tool-installers-plugin/job/master/badge/icon)](https://ci.jenkins.io/job/Plugins/job/extra-tool-installers-plugin/job/master/)
+
 You can find more info on the [plugin's page](https://plugins.jenkins.io/extra-tool-installers).
 
 ## Features
