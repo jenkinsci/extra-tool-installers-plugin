@@ -6,7 +6,7 @@ If you're not 100% sure it's a bug in the code then please seek help elsewhere.
 e.g. the [jenkins-users google group](https://groups.google.com/forum/#!forum/jenkinsci-users).
 - [RTFM](https://en.wikipedia.org/wiki/RTFM).
 The Jenkins UI pages include help that should explain things.
-The [plugin's wiki page](https://wiki.jenkins.io/display/JENKINS/Extra+Tool+Installers+Plugin) gives additional information.
+The [plugin's wiki page](README.md) gives additional information.
 - Be helpful and make no demands.
   * This code is Free Open-Source Software - nobody is obliged to make things work for you *but* you have legal permission to fix things yourself.
   * If you're reporting and fixing an issue yourself then you only need to explain what problem you're fixing in enough detail that the maintainer(s) can understand why your changes are in the public interest.
@@ -29,7 +29,7 @@ No new restrictions/conditions are permitted.
 - Check and provide errors from the build log and any errors from `Manage Jenkins` -> `System Log`.
   * Exceptions and stacktraces are *especially* useful, so don't omit those...
   * Note that sensitive information may be visible in logs, so take care to redact logs where necessary.
-- Ensure that any code or log example surround with [the right markdown](https://help.github.com/articles/github-flavored-markdown/) otherwise it'll be unreadable.
+- Ensure that any code or log examples are surrounded with [the right markdown](https://help.github.com/articles/github-flavored-markdown/) otherwise it'll be unreadable.
 
 # Submitting pull requests
 
@@ -46,6 +46,5 @@ Please do not do both in the same PR as this makes life difficult for anyone els
 
 # Links
 
-- https://wiki.jenkins.io/display/JENKINS/Extra+Tool+Installers+Plugin
-- https://wiki.jenkins.io/display/JENKINS/Beginners+Guide+to+Contributing
-- https://wiki.jenkins.io/display/JENKINS/Extend+Jenkins
+- https://plugins.jenkins.io/extra-tool-installers/
+- https://jenkins.io/participate/code/
