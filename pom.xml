@@ -12,7 +12,7 @@
     <name>Jenkins Extra Tool Installers Plugin</name>
     <description>Provides additional tool installers</description>
     <packaging>hpi</packaging>
-    <url>https://wiki.jenkins.io/display/JENKINS/Extra+Tool+Installers+Plugin</url>
+    <url>https://github.com/jenkinsci/extra-tool-installers-plugin</url>
 
     <properties>
         <jenkins.version>2.60.3</jenkins.version>
