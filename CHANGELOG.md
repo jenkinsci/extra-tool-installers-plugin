@@ -1,7 +1,7 @@
 # Version History
 
-### Version TBD
-_TBD_
+### Version 1.0
+_Aug 10, 2020_
 * ![(info)](docs/images/information.svg)
 Moved documentation from (deprecated) Jenkins Wiki to github.
 * ![(plus)](docs/images/add.svg)
