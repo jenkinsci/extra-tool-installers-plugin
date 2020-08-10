@@ -1,11 +1,20 @@
 # Version History
 
+### Version TBD
+_TBD_
+* ![(info)](docs/images/information.svg)
+Moved documentation from (deprecated) Jenkins Wiki to github.
+* ![(plus)](docs/images/add.svg)
+Tidied up documentation so it's all using the same Jenkins style in screenshots.
+
 ### Version 0.5
 _Feb 08, 2019_
 * ![(plus)](docs/images/add.svg)
 Added the "Download (with basic authentication) and extract .zip/.tar.gz" installer.
 * ![(plus)](docs/images/add.svg)
 Added the "Try any of ..." installer.
+* ![(info)](docs/images/information.svg)
+Update the core requirement to 2.60.3.
 
 ### Version 0.4
 _Dec 12, 2017_
