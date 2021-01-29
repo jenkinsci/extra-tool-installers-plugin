@@ -1,0 +1,22 @@
+<div>
+  <p>
+    Locates an executable that's already on the PATH and sets the tool home relative to that.
+  </p>
+  <p>
+    Note: This does not install anything.
+    It's main use is to allow nodes to avoid installing things they already have, or to fail builds before they run on a node lacking a needed tool.
+  </p>
+  <p>
+    For example,
+    if the
+    executable name
+    is &quot;foo&quot;, the
+    relative path
+    is &quot;../bar&quot; and the executable can be found in the
+    PATH
+    at &quot;/usr/local/bin/foopackage/bin/foo&quot;,
+    then Jenkins will be told that the tool's HOME directory is &quot;/usr/local/bin/foopackage/bar&quot;
+    (as that is /usr/local/bin/foopackage/bin/../bar).
+    If &quot;foo&quot; is not on the PATH then the installation method will fail.
+  </p>
+</div>

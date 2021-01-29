@@ -30,6 +30,9 @@ Plugin provides following installers:
     e.g.
     Extract .zip/tar.gz
     installers that are downloading from URLs which cannot be relied upon.
+* Find on PATH
+  * Does not install anything
+  * Fails if the specified executable is not on the agent's PATH already
 
 ## Example usage
 
@@ -55,6 +58,13 @@ i.e. up to 12 download attempts in total (aabbaabbaabb)
 
 ![](docs/images/example-try-any-of.png)
 
+### Install Git on Windows machines
+This example uses the Find on PATH installer to ensure that Git is already present on unix & linux machines, but installs Git on Windows machines.
+
+Note: Where an installation method for a Custom Tool definition (as shown earlier examples above) returns the directory containing the tool, the installation methods for a Git definition must return the location of the git client executable itself.
+That's why this example specifies a "Relative Path" of "git" (and a "Subdirectory of extracted archive" of "bin/git.exe").
+
+![](docs/images/example-findOnPath.png)
 
 ## See also
 * [Software licence](LICENSE)

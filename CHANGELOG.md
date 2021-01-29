@@ -1,5 +1,10 @@
 # Version History
 
+### Unreleased
+CI build of latest code can be found [here](https://ci.jenkins.io/job/Plugins/job/extra-tool-installers-plugin/job/master/lastSuccessfulBuild/artifact/target/).
+* ![(plus)](docs/images/add.svg)
+Added "Find on PATH" installer.
+
 ### Version 1.0
 _Aug 10, 2020_
 * ![(info)](docs/images/information.svg)
