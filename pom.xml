@@ -9,7 +9,7 @@
 
     <groupId>io.jenkins.plugins</groupId>
     <artifactId>extra-tool-installers</artifactId>
-    <version>${revision}${changelist}</version>
+    <version>1.1</version>
     <name>Jenkins Extra Tool Installers Plugin</name>
     <description>Provides additional tool installation methods.</description>
     <packaging>hpi</packaging>
@@ -91,7 +91,7 @@
         <connection>scm:git:ssh://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git</developerConnection>
         <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-        <tag>HEAD</tag>
+        <tag>extra-tool-installers-1.1</tag>
     </scm>
 
     <licenses>
