@@ -2,6 +2,8 @@
 
 ### Unreleased
 CI build of latest code can be found [here](https://ci.jenkins.io/job/Plugins/job/extra-tool-installers-plugin/job/master/lastSuccessfulBuild/artifact/target/).
+* ![(plus)](docs/images/add.svg)
+Added "Find on PATH" installer.
 * ![(info)](docs/images/information.svg)
 Update the core requirement to 2.289.1
 
