@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -60,6 +59,11 @@ public class IsAlreadyOnPath extends ToolInstaller {
     @CheckForNull
     private String versionMax;
 
+    /**
+     * Constructor that sets mandatory fields.
+     * 
+     * @param label The {@link ToolInstaller#getLabel()}.
+     */
     @DataBoundConstructor
     public IsAlreadyOnPath(String label) {
         super(label);
@@ -78,7 +82,7 @@ public class IsAlreadyOnPath extends ToolInstaller {
     /**
      * Sets {@link #getExecutableName()}.
      * 
-     * @param url New value.
+     * @param executable New value.
      */
     @DataBoundSetter
     public void setExecutableName(@Nullable String executable) {
@@ -99,7 +103,7 @@ public class IsAlreadyOnPath extends ToolInstaller {
     /**
      * Sets {@link #getRelativePath()}.
      * 
-     * @param subdir New value.
+     * @param relativePath New value.
      */
     @DataBoundSetter
     public void setRelativePath(@Nullable String relativePath) {
@@ -145,7 +149,7 @@ public class IsAlreadyOnPath extends ToolInstaller {
     }
 
     /**
-     * See {@link #setVersionCmd(List)}.
+     * See {@link #setVersionCmd(String[])}.
      * 
      * @param versionCmdString New value as multi-line string.
      */
@@ -201,14 +205,14 @@ public class IsAlreadyOnPath extends ToolInstaller {
      * @param versionPatternString New value.
      */
     @DataBoundSetter
-    public void setVersionPatternString(String versionPattern) {
-        if (Util.fixEmpty(versionPattern) != null) {
+    public void setVersionPatternString(String versionPatternString) {
+        if (Util.fixEmpty(versionPatternString) != null) {
             try {
-                this.versionPattern = Pattern.compile(versionPattern);
+                this.versionPattern = Pattern.compile(versionPatternString);
                 this.versionPatternString = null;
             } catch (PatternSyntaxException ex) {
                 this.versionPattern = null;
-                this.versionPatternString = versionPattern;
+                this.versionPatternString = versionPatternString;
             }
         } else {
             this.versionPattern = null;
@@ -327,6 +331,9 @@ public class IsAlreadyOnPath extends ToolInstaller {
         return new FindOnPathCallable(exeName, logOrNull);
     }
 
+    /**
+     * Descriptor for {@link IsAlreadyOnPath}.
+     */
     @Extension
     @Symbol("findonpath")
     public static class DescriptorImpl extends ToolInstallerDescriptor<IsAlreadyOnPath> {

@@ -37,7 +37,14 @@ import hudson.tools.ToolInstaller;
 public abstract class AbstractExtraToolInstaller extends ToolInstaller {
     private boolean failOnSubstitution;
     private final String toolHome;
-    
+
+    /**
+     * Constructor that sets all fields.
+     * 
+     * @param label              The {@link ToolInstaller#getLabel()}.
+     * @param toolHome           Our {@link #getToolHome()}.
+     * @param failOnSubstitution Our {@link #isFailOnSubstitution()}.
+     */
     public AbstractExtraToolInstaller(String label, String toolHome, boolean failOnSubstitution) {
         super(label);
         this.failOnSubstitution = failOnSubstitution;
@@ -51,7 +58,7 @@ public abstract class AbstractExtraToolInstaller extends ToolInstaller {
     public final String getToolHome() {
         return toolHome;
     }
-    
+
     /**
      * Substitute variables and fail on errors.
      * @param stringName Name of the field
