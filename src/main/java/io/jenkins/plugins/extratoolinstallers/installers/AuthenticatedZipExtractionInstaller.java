@@ -64,6 +64,11 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
     @CheckForNull
     private String subdir;
 
+    /**
+     * Constructor that sets mandatory fields.
+     * 
+     * @param label The {@link ToolInstaller#getLabel()}.
+     */
     @DataBoundConstructor
     public AuthenticatedZipExtractionInstaller(String label) {
         super(label);
@@ -353,6 +358,9 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
         }
     }
 
+    /**
+     * Descriptor for the {@link AuthenticatedZipExtractionInstaller}.
+     */
     @Extension @Symbol("authenticatedzip")
     public static class DescriptorImpl extends ToolInstallerDescriptor<AuthenticatedZipExtractionInstaller> {
         public String getDisplayName() {

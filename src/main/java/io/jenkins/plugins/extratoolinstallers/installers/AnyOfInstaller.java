@@ -36,7 +36,7 @@ import hudson.util.FormValidation;
  */
 public class AnyOfInstaller extends ToolInstaller {
     /**
-     * The list of installers we will attempt. Cannot be empty for this class to
+     * The list of installers we will attempt. Cannot be empty for this to
      * be valid.
      */
     @CheckForNull
@@ -54,6 +54,9 @@ public class AnyOfInstaller extends ToolInstaller {
      */
     private /* almost final */ int attemptsOfWholeList;
 
+    /**
+     * Default constructor.
+     */
     @DataBoundConstructor
     public AnyOfInstaller() {
         // we never have a label ourselves; we only ever have labels in our
@@ -61,11 +64,22 @@ public class AnyOfInstaller extends ToolInstaller {
         super(null);
     }
 
+    /**
+     * The list of installers we will attempt. Cannot be empty for this installer to be
+     * valid.
+     * 
+     * @return Our installers.
+     */
     @CheckForNull
     public InstallSourceProperty getInstallers() {
         return installers;
     }
 
+    /**
+     * Sets {@link #getInstallers()}.
+     * 
+     * @param installers The new value.
+     */
     @DataBoundSetter
     public void setInstallers(@Nullable final InstallSourceProperty installers) {
         this.installers = installers;
@@ -85,6 +99,11 @@ public class AnyOfInstaller extends ToolInstaller {
         return Math.max(1, attemptsPerInstaller);
     }
 
+    /**
+     * Sets {@link #getAttemptsPerInstaller()}.
+     * 
+     * @param attemptsPerInstaller The new value.
+     */
     @DataBoundSetter
     public void setAttemptsPerInstaller(final int attemptsPerInstaller) {
         this.attemptsPerInstaller = attemptsPerInstaller;
@@ -101,6 +120,11 @@ public class AnyOfInstaller extends ToolInstaller {
         return Math.max(1, attemptsOfWholeList);
     }
 
+    /**
+     * Sets {@link #getAttemptsOfWholeList()}.
+     * 
+     * @param attemptsOfWholeList The new value.
+     */
     @DataBoundSetter
     public void setAttemptsOfWholeList(final int attemptsOfWholeList) {
         this.attemptsOfWholeList = attemptsOfWholeList;
