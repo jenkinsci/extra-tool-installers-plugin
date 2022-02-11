@@ -6,7 +6,7 @@ CI build of latest code can be found [here](https://ci.jenkins.io/job/Plugins/jo
 ### Version 1.1
 _Feb 11, 2022_
 * ![(plus)](docs/images/add.svg)
-Added "Find on PATH" installer.
+Added "Check is already on PATH" installer.
 * ![(info)](docs/images/information.svg)
 Update the core requirement to 2.289.1
 
