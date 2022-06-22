@@ -3,3 +3,5 @@
 .project
 /target/
 /work/
+.idea/
+extra-tool-installers.iml

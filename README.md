@@ -34,6 +34,10 @@ Plugin provides following installers:
   * Does not install anything
   * Fails if the specified executable is not on the agent's PATH already
   * (Optionally) Fails if the executable is not an acceptable version.
+* Check tool is already installed to the given directory
+  * Does not install anything
+  * Fails if the specified executable does not exist
+  * (Optionally) Fails if the executable is not an acceptable version.
 
 ## Example usage
 

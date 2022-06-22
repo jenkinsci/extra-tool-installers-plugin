@@ -1,0 +1,27 @@
+<div>
+  <p>
+    Locates an executable in the given path and sets the tool home relative to that.
+    Fails if the given path is not an executable file.
+  </p>
+    Optionally runs a command with arguments to determine the version,
+    parses the command output,
+    and
+    verifies that the reported version is in the specified range.
+  <p>
+  </p>
+  <p>
+    Note: This does not install anything.
+    It's purpose is to allow nodes to avoid installing things they already have, or to fail builds before they run on a node lacking a needed tool.
+    If combined with the &quot;Any of...&quot; installer, the &quot;fail&quot; can trigger a real installation.
+  </p>
+  <p>
+    For example,
+    if the
+    executable path
+    is &quot;/opt/foo/usr/bin/bar&quot;, the
+    relative path
+    is &quot;../..&quot;,
+    then Jenkins will be told that the tool's HOME directory is &quot;/opt/foo&quot;
+    If file &quot;/opt/foo/usr/bin/bar&quot; doesn't exist, then the installation method will fail.
+  </p>
+</div>
