@@ -1,0 +1,29 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:st="jelly:stapler" xmlns:c="lib/credentials" xmlns:t="/hudson/tools">
+    <t:label />
+    <f:entry title="${%Executable Path}" field="executablePath">
+        <f:textbox/>
+    </f:entry>
+    <f:entry title="${%Tool home path relative to the specified Executable Path}" field="relativePath" default=".">
+        <f:textbox/>
+    </f:entry>
+    <f:advanced title="${%Version Check...}">
+        <f:entry title="${%Version Check Command}" field="versionCmdString" default="">
+            <!-- Note: this should be a f:expandableTextbox but JENKINS-26407 means we have to use a f:textarea instead -->
+            <f:textarea/>
+        </f:entry>
+        <f:entry title="${%Version Check Command Output Pattern}" field="versionPatternString" default="">
+            <f:textbox/>
+        </f:entry>
+        <f:entry title="${%Minimum Version}" field="versionMin" default="">
+            <f:textbox/>
+        </f:entry>
+        <f:entry title="${%Maximum Version}" field="versionMax" default="">
+            <f:textbox/>
+        </f:entry>
+        <f:entry title="${%Test Sample Command Output}" field="versionTestString" default="">
+            <!-- Note: this could have been a f:expandableTextbox but JENKINS-26407 means we have to use a f:textarea instead -->
+            <f:textarea/>
+        </f:entry>
+    </f:advanced>
+</j:jelly>

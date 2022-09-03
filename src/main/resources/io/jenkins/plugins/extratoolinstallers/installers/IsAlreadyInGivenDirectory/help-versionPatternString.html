@@ -1,0 +1,20 @@
+<div>
+    <p>
+    A regular expression used to parse the output of the Version Check Command.
+    Capturing group(s) must be used to identify the version itself.
+    </p>
+
+    <p>
+    e.g. for git, the command
+    &quot;<code>git --version</code>&quot;
+    outputs a string of the form
+    &quot;<code>git version 1.2.3</code>&quot;
+    so would need a regular expression
+    &quot;<code>git version ([0-9.]*)</code>&quot;
+    in order to obtain the version &quot;<code>1.2.3</code>&quot;.
+    </p>
+
+    <p>
+    If this is left blank (the default) then no version check will be performed.
+    </p>
+</div>

@@ -1,0 +1,21 @@
+<div>
+    <p>
+    The maximum acceptable version.
+    </p>
+
+    <p>
+    Comparisons split on period characters and do numerical comparison ahead of lexicographical.
+    e.g. <code>1.10</code> is later than <code>1.2</code> and <code>10a</code> is later than <code>10</code>.
+    </p>
+
+    <p>
+    e.g. for git, you could specify
+    &quot;<code>2.99</code>&quot;
+    and the version check will reject a version of git of 3.anything or later, or even 2.99.1, but would also reject 2.100.
+    </p>
+
+    <p>
+    If this is left blank (the default) then there is no maximum, but the minimum (if any) can still apply.
+    If neither minimum or maximum is set then no version check will be performed.
+    </p>
+</div>
