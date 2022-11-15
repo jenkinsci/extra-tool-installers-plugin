@@ -4,11 +4,13 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
-import static com.google.common.collect.Lists.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
@@ -52,7 +54,7 @@ public class AnyOfInstallerTest {
         // Given
         final TestToolInstaller installer1 = mock(TestToolInstaller.class);
         final TestToolInstaller installer2 = mock(TestToolInstaller.class);
-        final List<ToolInstaller> installerList = newArrayList(installer1, installer2);
+        final List<ToolInstaller> installerList = Arrays.asList(installer1, installer2);
         final InstallSourceProperty installers = new InstallSourceProperty(installerList);
         final AnyOfInstaller instance = new AnyOfInstaller();
         final ToolInstallation mockToolInstallation = mock(ToolInstallation.class);
@@ -123,7 +125,7 @@ public class AnyOfInstallerTest {
     }
 
     @Test
-    public void setToolWhenCalledNoInstancesThenJustSetsTool() throws Exception {
+    public void setToolWhenCalledNoInstancesThenJustSetsTool() {
         // Given
         final AnyOfInstaller instance = new AnyOfInstaller();
         final ToolInstallation mockToolInstallation = mock(ToolInstallation.class);
@@ -140,7 +142,7 @@ public class AnyOfInstallerTest {
         // Given
         final TestToolInstaller installer1 = mock(TestToolInstaller.class);
         final TestToolInstaller installer2 = mock(TestToolInstaller.class);
-        final List<ToolInstaller> installerList = newArrayList(installer1, installer2);
+        final List<ToolInstaller> installerList = Arrays.asList(installer1, installer2);
         final InstallSourceProperty installers = new InstallSourceProperty(installerList);
         final AnyOfInstaller instance = new AnyOfInstaller();
         instance.setInstallers(installers);
@@ -175,7 +177,7 @@ public class AnyOfInstallerTest {
         final ToolInstaller installer2 = mock(ToolInstaller.class);
         when(installer1.appliesTo(mockNode)).thenReturn(false);
         when(installer2.appliesTo(mockNode)).thenReturn(false);
-        final List<ToolInstaller> installerList = newArrayList(installer1, installer2);
+        final List<ToolInstaller> installerList = Arrays.asList(installer1, installer2);
         final InstallSourceProperty installers = new InstallSourceProperty(installerList);
         final AnyOfInstaller instance = new AnyOfInstaller();
         instance.setInstallers(installers);
@@ -195,7 +197,7 @@ public class AnyOfInstallerTest {
         final ToolInstaller installer2 = mock(ToolInstaller.class);
         when(installer1.appliesTo(mockNode)).thenReturn(false);
         when(installer2.appliesTo(mockNode)).thenReturn(true);
-        final List<ToolInstaller> installerList = newArrayList(installer1, installer2);
+        final List<ToolInstaller> installerList = Arrays.asList(installer1, installer2);
         final InstallSourceProperty installers = new InstallSourceProperty(installerList);
         final AnyOfInstaller instance = new AnyOfInstaller();
         instance.setInstallers(installers);
@@ -212,17 +214,17 @@ public class AnyOfInstallerTest {
         // Given
         final Node mockNode = mock(Node.class);
         final ToolInstallation mockTool = mock(ToolInstallation.class);
-        final List<String> actualLogRecord = newArrayList();
+        final List<String> actualLogRecord = new ArrayList<>();
         final TaskListener mockLog = mockTaskListener(actualLogRecord);
         final String installerDisplayName = "MyInstaller";
         final ToolInstaller installer = mockInstaller(installerDisplayName, mockNode);
         final PretendInstallerFailureException expectedCause = new PretendInstallerFailureException();
         when(installer.performInstallation(mockTool, mockNode, mockLog)).thenThrow(expectedCause);
-        final List<ToolInstaller> installerList = newArrayList(installer);
+        final List<ToolInstaller> installerList = Collections.singletonList(installer);
         final InstallSourceProperty installers = new InstallSourceProperty(installerList);
         final AnyOfInstaller instance = new AnyOfInstaller();
         instance.setInstallers(installers);
-        final List<String> expectedLogRecord = newArrayList(Messages.AnyOfInstaller_1loop_1installer_1attempt(1, 1, 1,
+        final List<String> expectedLogRecord = Collections.singletonList(Messages.AnyOfInstaller_1loop_1installer_1attempt(1, 1, 1,
                 1, installerDisplayName, 1, 1, expectedCause));
 
         // When
@@ -243,7 +245,7 @@ public class AnyOfInstallerTest {
         // Given
         final Node mockNode = mock(Node.class);
         final ToolInstallation mockTool = mock(ToolInstallation.class);
-        final List<String> actualLogRecord = newArrayList();
+        final List<String> actualLogRecord = new ArrayList<>();
         final TaskListener mockLog = mockTaskListener(actualLogRecord);
         final String workingInstallerDisplayName = "WorkingInstaller";
         final String failingInstallerDisplayName = "FailingInapplicableInstaller";
@@ -253,11 +255,11 @@ public class AnyOfInstallerTest {
                 .thenThrow(new PretendInstallerFailureException());
         final FilePath expected = stubFilePath();
         when(applicableInstaller.performInstallation(mockTool, mockNode, mockLog)).thenReturn(expected);
-        final List<ToolInstaller> installerList = newArrayList(inapplicableInstaller, applicableInstaller);
+        final List<ToolInstaller> installerList = Arrays.asList(inapplicableInstaller, applicableInstaller);
         final InstallSourceProperty installers = new InstallSourceProperty(installerList);
         final AnyOfInstaller instance = new AnyOfInstaller();
         instance.setInstallers(installers);
-        final List<String> expectedLogRecord = newArrayList();
+        final List<String> expectedLogRecord = new ArrayList<>();
 
         // When
         final FilePath actual = instance.performInstallation(mockTool, mockNode, mockLog);
@@ -275,7 +277,7 @@ public class AnyOfInstallerTest {
         // Given
         final Node mockNode = mock(Node.class);
         final ToolInstallation mockTool = mock(ToolInstallation.class);
-        final List<String> actualLogRecord = newArrayList();
+        final List<String> actualLogRecord = new ArrayList<>();
         final TaskListener mockLog = mockTaskListener(actualLogRecord);
         final String inapplicableInstallerDisplayName1 = "ShouldNotAppearAsThisIsNotApplicableToNode1";
         final String inapplicableInstallerDisplayName2 = "ShouldNotAppearAsThisIsNotApplicableToNode2";
@@ -311,7 +313,7 @@ public class AnyOfInstallerTest {
         final ToolInstaller unreliableInstaller = mockInstaller(unreliableInstallerName, mockNode);
         when(unreliableInstaller.performInstallation(mockTool, mockNode, mockLog)).thenThrow(unreliableInstallerCause1,
                 unreliableInstallerCause2, unreliableInstallerCause3, unreliableInstallerCause4).thenReturn(expected);
-        final List<ToolInstaller> installerList = newArrayList(inapplicableInstaller1, failingInstaller,
+        final List<ToolInstaller> installerList = Arrays.asList(inapplicableInstaller1, failingInstaller,
                 inapplicableInstaller2, unreliableInstaller);
         final int failingInstallerIndex = 2;
         final int unreliableInstallerIndex = 4;
@@ -323,7 +325,7 @@ public class AnyOfInstallerTest {
         final int insts = installerList.size();
         instance.setAttemptsOfWholeList(loops);
         instance.setAttemptsPerInstaller(tries);
-        final List<String> expectedLogRecord = newArrayList(
+        final List<String> expectedLogRecord = Arrays.asList(
                 Messages.AnyOfInstaller_loops_installers_attempts(1, loops, failingInstallerIndex, insts,
                         failingInstallerName, 1, tries, failingInstallerCause1),
                 Messages.AnyOfInstaller_loops_installers_attempts(1, loops, failingInstallerIndex, insts,
@@ -388,7 +390,7 @@ public class AnyOfInstallerTest {
         final PrintStream ps = mock(PrintStream.class);
         doAnswer(new Answer<Void>() {
             @Override
-            public Void answer(InvocationOnMock invocation) throws Throwable {
+            public Void answer(InvocationOnMock invocation) {
                 final Object[] args = invocation.getArguments();
                 final String arg = (String) args[0];
                 whereToRecord.add(arg);
