@@ -9,6 +9,7 @@ import java.util.List;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.URI;
@@ -371,6 +372,7 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
         }
 
         /* List credentials that can be used on the specified URL */
+        @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE", justification = "TODO needs triage")
         public ListBoxModel doFillCredentialsIdItems(@QueryParameter String credentialsId, @QueryParameter String url) {
             /*
              * System.out.println("doFillCredentialsIdItems(" + item + "," +
