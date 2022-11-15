@@ -6,9 +6,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.URI;
@@ -141,7 +141,7 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
     }
 
     @Override
-    public FilePath performInstallation(@Nonnull ToolInstallation tool, @Nonnull Node node,
+    public FilePath performInstallation(@NonNull ToolInstallation tool, @NonNull Node node,
             @CheckForNull TaskListener log) throws IOException, InterruptedException {
         final String url = getUrl();
         final URI uri;
@@ -194,9 +194,9 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
         }
     }
 
-    private Date downloadOnNodeWithFallbackToMaster(@Nonnull final URI uri,
+    private Date downloadOnNodeWithFallbackToMaster(@NonNull final URI uri,
             @CheckForNull final Long timestampOfLocalContents, @CheckForNull final String usernameOrNull,
-            @CheckForNull final String passwordOrNull, @Nonnull final String nodeName, @Nonnull final FilePath dir,
+            @CheckForNull final String passwordOrNull, @NonNull final String nodeName, @NonNull final FilePath dir,
             @CheckForNull final TaskListener logOrNull) throws IOException, InterruptedException {
         if (dir.isRemote()) {
             /*
@@ -260,18 +260,18 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
         return credentialsOrNull;
     }
 
-    protected Date downloadOnFromMaster(@Nonnull final URI uri, @CheckForNull final Long timestampOfLocalContents,
+    protected Date downloadOnFromMaster(@NonNull final URI uri, @CheckForNull final Long timestampOfLocalContents,
             @CheckForNull final String usernameOrNull, @CheckForNull final String passwordOrNull,
-            @Nonnull final FilePath dir, @CheckForNull final TaskListener logOrNull, @Nonnull final String nodeName)
+            @NonNull final FilePath dir, @CheckForNull final TaskListener logOrNull, @NonNull final String nodeName)
             throws IOException, InterruptedException {
         final Date timestampOfRemoteResource = AuthenticatedDownloadCallable.downloadAndUnpack(uri, usernameOrNull,
                 passwordOrNull, timestampOfLocalContents, nodeName, dir, logOrNull);
         return timestampOfRemoteResource;
     }
 
-    protected Date downloadOnRemoteNode(@Nonnull final URI uri, @CheckForNull final Long timestampOfLocalContents,
+    protected Date downloadOnRemoteNode(@NonNull final URI uri, @CheckForNull final Long timestampOfLocalContents,
             @CheckForNull final String usernameOrNull, @CheckForNull final String passwordOrNull,
-            @Nonnull final FilePath dir, @CheckForNull final TaskListener logOrNull, @Nonnull final String nodeName)
+            @NonNull final FilePath dir, @CheckForNull final TaskListener logOrNull, @NonNull final String nodeName)
             throws IOException, InterruptedException {
         final AuthenticatedDownloadCallable nodeOperation = new AuthenticatedDownloadCallable(uri, usernameOrNull,
                 passwordOrNull, timestampOfLocalContents, nodeName, logOrNull);
@@ -282,7 +282,7 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
     /**
      * Looks up credentials by ID, ensuring they're valid for the specified host
      */
-    private static @CheckForNull StandardCredentials getCredentialsOrNull(@Nonnull final String credentialsId,
+    private static @CheckForNull StandardCredentials getCredentialsOrNull(@NonNull final String credentialsId,
             @CheckForNull final String urlHostOrNullOrEmpty) {
         final List<DomainRequirement> forOurUrl = getDomainRequirements(urlHostOrNullOrEmpty);
         final ItemGroup<?> allOfJenkins = Jenkins.getInstance();
@@ -296,7 +296,7 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
     }
 
     /** Extracts the username from any credential type we support. */
-    private static @CheckForNull String getUsernameFromCredentials(@Nonnull StandardCredentials credentials) {
+    private static @CheckForNull String getUsernameFromCredentials(@NonNull StandardCredentials credentials) {
         if (credentials instanceof UsernameCredentials) {
             final UsernameCredentials userCreds = (UsernameCredentials) credentials;
             return userCreds.getUsername();
@@ -306,7 +306,7 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
     }
 
     /** Extracts the password from any credential type we support. */
-    private static @CheckForNull String getPasswordFromCredentials(@Nonnull StandardCredentials credentials) {
+    private static @CheckForNull String getPasswordFromCredentials(@NonNull StandardCredentials credentials) {
         if (credentials instanceof PasswordCredentials) {
             final PasswordCredentials pwdCreds = (PasswordCredentials) credentials;
             return Secret.toString(pwdCreds.getPassword());
@@ -325,7 +325,7 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
             CredentialsMatchers.instanceOf(UsernameCredentials.class));
 
     /** Limits credentials to those available to our URL's server. */
-    private static @Nonnull List<DomainRequirement> getDomainRequirements(
+    private static @NonNull List<DomainRequirement> getDomainRequirements(
             @CheckForNull final String urlHostOrNullOrEmpty) {
         if (Util.fixEmpty(urlHostOrNullOrEmpty) != null) {
             return Collections.<DomainRequirement>singletonList(new HostnameRequirement(urlHostOrNullOrEmpty));
@@ -452,7 +452,7 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
          *         then we return what's wrong (if anything) with the
          *         credentials.
          */
-        private static @Nonnull FormValidation checkUrlAndCredentialsId(final boolean checkUrl,
+        private static @NonNull FormValidation checkUrlAndCredentialsId(final boolean checkUrl,
                 @CheckForNull final String credentialsIdOrNull, @CheckForNull final String urlOrNull) {
             if (!(hasPermissionToConfigure())) {
                 /*
@@ -547,13 +547,13 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
             return FormValidation.ok();
         }
 
-        private static @Nonnull FormValidation urlProblem(final boolean checkUrlNotCredentials,
-                @Nonnull final FormValidation problemWithUrl) {
+        private static @NonNull FormValidation urlProblem(final boolean checkUrlNotCredentials,
+                @NonNull final FormValidation problemWithUrl) {
             return checkUrlNotCredentials ? problemWithUrl : FormValidation.ok();
         }
 
-        private static @Nonnull FormValidation credentialProblem(final boolean checkUrlNotCredentials,
-                @Nonnull final FormValidation problemWithCredentials) {
+        private static @NonNull FormValidation credentialProblem(final boolean checkUrlNotCredentials,
+                @NonNull final FormValidation problemWithCredentials) {
             return checkUrlNotCredentials ? FormValidation.ok() : problemWithCredentials;
         }
 

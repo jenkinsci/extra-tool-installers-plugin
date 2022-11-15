@@ -9,9 +9,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.jenkinsci.Symbol;
 import org.kohsuke.accmod.Restricted;
@@ -126,7 +126,7 @@ public class IsAlreadyOnPath extends ToolInstaller {
      * 
      * @return {@link #getVersionCmd()} as a multi-line string.
      */
-    @Nonnull
+    @NonNull
     public String getVersionCmdString() {
         final String[] v = getVersionCmd();
         if (v == null) {
@@ -262,7 +262,7 @@ public class IsAlreadyOnPath extends ToolInstaller {
     }
 
     @Override
-    public FilePath performInstallation(@Nonnull ToolInstallation tool, @Nonnull Node node,
+    public FilePath performInstallation(@NonNull ToolInstallation tool, @NonNull Node node,
             @CheckForNull TaskListener log) throws IOException, InterruptedException {
         final String exeName = getExecutableName();
         if (exeName == null) {
@@ -301,8 +301,8 @@ public class IsAlreadyOnPath extends ToolInstaller {
         return resultToReturn;
     }
 
-    @Nonnull
-    private FilePath findExecutableOnNodeOrThrow(@Nonnull final String exeName, @Nonnull Node node,
+    @NonNull
+    private FilePath findExecutableOnNodeOrThrow(@NonNull final String exeName, @NonNull Node node,
             @CheckForNull final TaskListener logOrNull) throws IOException, InterruptedException {
         final FilePath rootPath = node.getRootPath();
         if (rootPath == null) {
@@ -326,8 +326,8 @@ public class IsAlreadyOnPath extends ToolInstaller {
 
     // package access for test purposes only
     @Restricted(NoExternalUse.class)
-    @Nonnull
-    FindOnPathCallable mkCallable(@Nonnull final String exeName, @CheckForNull final TaskListener logOrNull) {
+    @NonNull
+    FindOnPathCallable mkCallable(@NonNull final String exeName, @CheckForNull final TaskListener logOrNull) {
         return new FindOnPathCallable(exeName, logOrNull);
     }
 
@@ -544,7 +544,7 @@ public class IsAlreadyOnPath extends ToolInstaller {
      * @return 0 if versions are equivalent, +ve if a is higher than b, -ve if a is
      *         lower.
      */
-    private static int compareVersionParts(@Nonnull String a, @Nonnull String b) {
+    private static int compareVersionParts(@NonNull String a, @NonNull String b) {
         final int ai = findIndexOfFirstNonnumericalCharacter(a);
         final int bi = findIndexOfFirstNonnumericalCharacter(b);
         final String aNumberString;
@@ -576,7 +576,7 @@ public class IsAlreadyOnPath extends ToolInstaller {
         return aRemainder.compareTo(bRemainder);
     }
 
-    private static int findIndexOfFirstNonnumericalCharacter(@Nonnull String s) {
+    private static int findIndexOfFirstNonnumericalCharacter(@NonNull String s) {
         final int l = s.length();
         for (int i = 0; i < l; i++) {
             final char c = s.charAt(i);

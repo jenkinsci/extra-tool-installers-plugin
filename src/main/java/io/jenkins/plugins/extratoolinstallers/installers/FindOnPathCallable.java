@@ -3,9 +3,9 @@ package io.jenkins.plugins.extratoolinstallers.installers;
 import java.io.File;
 import java.io.IOException;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
@@ -21,7 +21,7 @@ import jenkins.MasterToSlaveFileCallable;
  */
 class FindOnPathCallable extends MasterToSlaveFileCallable<String> {
     private static final long serialVersionUID = 1L;
-    @Nonnull
+    @NonNull
     private final String executableName;
     @CheckForNull
     private final TaskListener logOrNull;
@@ -35,12 +35,12 @@ class FindOnPathCallable extends MasterToSlaveFileCallable<String> {
      *                       the normal running commentary.
      */
     @Restricted(NoExternalUse.class)
-    FindOnPathCallable(@Nonnull String executableName, @CheckForNull TaskListener logOrNull) {
+    FindOnPathCallable(@NonNull String executableName, @CheckForNull TaskListener logOrNull) {
         this.executableName = executableName;
         this.logOrNull = logOrNull;
     }
 
-    public String invoke(@Nonnull File d, VirtualChannel channel) throws IOException, InterruptedException {
+    public String invoke(@NonNull File d, VirtualChannel channel) throws IOException, InterruptedException {
         return findOnPath(executableName, getPath(), logOrNull);
     }
 
@@ -63,8 +63,8 @@ class FindOnPathCallable extends MasterToSlaveFileCallable<String> {
      * @throws IOException                  if we failed for other reasons.
      * @throws InterruptedException         if we were interrupted.
      */
-    @Nonnull
-    private static String findOnPath(@Nonnull final String executableName, @CheckForNull final String pathToSearch,
+    @NonNull
+    private static String findOnPath(@NonNull final String executableName, @CheckForNull final String pathToSearch,
             @CheckForNull final TaskListener logOrNull) throws IOException, InterruptedException {
         final String path = Util.fixNull(pathToSearch);
         final String[] pathElements = path.split(File.pathSeparator);
@@ -83,19 +83,19 @@ class FindOnPathCallable extends MasterToSlaveFileCallable<String> {
     @Restricted(NoExternalUse.class)
     static class ExecutableNotOnPathException extends IOException {
         private static final long serialVersionUID = 1L;
-        @Nonnull
+        @NonNull
         private final String executableName;
-        @Nonnull
+        @NonNull
         private final String path;
 
-        private ExecutableNotOnPathException(@Nonnull final String executableName, @Nonnull final String path,
+        private ExecutableNotOnPathException(@NonNull final String executableName, @NonNull final String path,
                 @Nullable Throwable cause) {
             super("Executable '" + executableName + "' not found on PATH, " + path, cause);
             this.executableName = executableName;
             this.path = path;
         }
 
-        ExecutableNotOnPathException(@Nonnull final String executableName, @Nonnull final String path) {
+        ExecutableNotOnPathException(@NonNull final String executableName, @NonNull final String path) {
             this(executableName, path, null);
         }
 

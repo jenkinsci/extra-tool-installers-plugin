@@ -6,9 +6,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
@@ -34,7 +34,7 @@ import jenkins.MasterToSlaveFileCallable;
  */
 class AuthenticatedDownloadCallable extends MasterToSlaveFileCallable<Date> {
     private static final long serialVersionUID = 1L;
-    @Nonnull
+    @NonNull
     private final URI uri;
     @CheckForNull
     private final String usernameOrNull;
@@ -42,7 +42,7 @@ class AuthenticatedDownloadCallable extends MasterToSlaveFileCallable<Date> {
     private final String passwordOrNull;
     @CheckForNull
     private final Long timestampOfLocalContents;
-    @Nonnull
+    @NonNull
     private final String nodeName;
     @CheckForNull
     private final TaskListener logOrNull;
@@ -70,8 +70,8 @@ class AuthenticatedDownloadCallable extends MasterToSlaveFileCallable<Date> {
      *            Where to log build progress. Can be null to suppress the
      *            normal running commentary.
      */
-    AuthenticatedDownloadCallable(@Nonnull URI uri, @CheckForNull String usernameOrNull,
-            @CheckForNull String passwordOrNull, @CheckForNull Long timestampOfLocalContents, @Nonnull String nodeName,
+    AuthenticatedDownloadCallable(@NonNull URI uri, @CheckForNull String usernameOrNull,
+            @CheckForNull String passwordOrNull, @CheckForNull Long timestampOfLocalContents, @NonNull String nodeName,
             @CheckForNull TaskListener logOrNull) {
         this.uri = uri;
         this.usernameOrNull = usernameOrNull;
@@ -81,7 +81,7 @@ class AuthenticatedDownloadCallable extends MasterToSlaveFileCallable<Date> {
         this.logOrNull = logOrNull;
     }
 
-    public Date invoke(@Nonnull File d, VirtualChannel channel) throws IOException, InterruptedException {
+    public Date invoke(@NonNull File d, VirtualChannel channel) throws IOException, InterruptedException {
         final FilePath whereToDownloadTo = new FilePath(d);
         return downloadAndUnpack(uri, usernameOrNull, passwordOrNull, timestampOfLocalContents, nodeName,
                 whereToDownloadTo, logOrNull);
@@ -122,9 +122,9 @@ class AuthenticatedDownloadCallable extends MasterToSlaveFileCallable<Date> {
      * @throws InterruptedException
      *             if we were interrupted.
      */
-    static Date downloadAndUnpack(@Nonnull final URI uri, @CheckForNull final String usernameOrNull,
+    static Date downloadAndUnpack(@NonNull final URI uri, @CheckForNull final String usernameOrNull,
             @CheckForNull final String passwordOrNull, @CheckForNull final Long timestampOfLocalContents,
-            @Nonnull final String nodeName, @CheckForNull final FilePath whereToDownloadToOrNull,
+            @NonNull final String nodeName, @CheckForNull final FilePath whereToDownloadToOrNull,
             @CheckForNull final TaskListener logOrNull) throws IOException, InterruptedException {
         final HttpClient client = new HttpClient();
         final HttpMethodBase httpRequest;
@@ -201,8 +201,8 @@ class AuthenticatedDownloadCallable extends MasterToSlaveFileCallable<Date> {
     }
 
     private static void setAuthentication(@CheckForNull final String usernameOrNull,
-            @CheckForNull final String passwordOrNull, @Nonnull final HttpClient client,
-            @Nonnull final HttpMethodBase httpRequest) throws URIException {
+            @CheckForNull final String passwordOrNull, @NonNull final HttpClient client,
+            @NonNull final HttpMethodBase httpRequest) throws URIException {
         final UsernamePasswordCredentials httpClientCredentials = new UsernamePasswordCredentials(usernameOrNull,
                 passwordOrNull);
         final String host = httpRequest.getURI().getHost();
@@ -212,8 +212,8 @@ class AuthenticatedDownloadCallable extends MasterToSlaveFileCallable<Date> {
         client.getParams().setAuthenticationPreemptive(true);
     }
 
-    private static void skipDownload(@Nonnull final FilePath whereToDownloadTo,
-            @CheckForNull final TaskListener logOrNull, @Nonnull final URI uri, @Nonnull final String nodeName) {
+    private static void skipDownload(@NonNull final FilePath whereToDownloadTo,
+            @CheckForNull final TaskListener logOrNull, @NonNull final URI uri, @NonNull final String nodeName) {
         if (logOrNull != null) {
             final String folder = whereToDownloadTo.getRemote();
             final String msg = Messages.AuthenticatedZipExtractionInstaller_download_skipped(uri, folder, nodeName);
@@ -221,9 +221,9 @@ class AuthenticatedDownloadCallable extends MasterToSlaveFileCallable<Date> {
         }
     }
 
-    private static void doDownload(@Nonnull final HttpMethodBase httpGet, @Nonnull final FilePath whereToDownloadTo,
-            @CheckForNull final TaskListener logOrNull, @Nonnull final URI uri,
-            @CheckForNull final String usernameOrNull, @Nonnull final String nodeName)
+    private static void doDownload(@NonNull final HttpMethodBase httpGet, @NonNull final FilePath whereToDownloadTo,
+            @CheckForNull final TaskListener logOrNull, @NonNull final URI uri,
+            @CheckForNull final String usernameOrNull, @NonNull final String nodeName)
             throws IOException, InterruptedException, URIException {
         if (whereToDownloadTo.exists()) {
             whereToDownloadTo.deleteContents();
@@ -269,15 +269,15 @@ class AuthenticatedDownloadCallable extends MasterToSlaveFileCallable<Date> {
      */
     static class HttpGetException extends IOException {
         private static final long serialVersionUID = 1L;
-        @Nonnull
+        @NonNull
         private final String uri;
         @CheckForNull
         private final String usernameOrNull;
         @CheckForNull
         private final Integer httpStatusCodeOrNull;
 
-        private HttpGetException(@Nonnull final String uri, @CheckForNull final String usernameOrNull,
-                @CheckForNull Integer httpStatusCodeOrNull, @Nonnull final String reason, @Nullable Throwable cause) {
+        private HttpGetException(@NonNull final String uri, @CheckForNull final String usernameOrNull,
+                @CheckForNull Integer httpStatusCodeOrNull, @NonNull final String reason, @Nullable Throwable cause) {
             super((usernameOrNull == null ? "Anonymous" : "Authenticated") + " HTTP GET of " + uri
                     + (usernameOrNull == null ? "" : (" as " + usernameOrNull)) + " failed, " + reason, cause);
             this.uri = uri;
@@ -285,21 +285,21 @@ class AuthenticatedDownloadCallable extends MasterToSlaveFileCallable<Date> {
             this.httpStatusCodeOrNull = httpStatusCodeOrNull;
         }
 
-        HttpGetException(@Nonnull final String uri, @CheckForNull final String usernameOrNull, int httpStatusCode) {
+        HttpGetException(@NonNull final String uri, @CheckForNull final String usernameOrNull, int httpStatusCode) {
             this(uri, usernameOrNull, httpStatusCode,
                     httpStatusCode + " (" + HttpStatus.getStatusText(httpStatusCode) + ")", null);
         }
 
-        HttpGetException(@Nonnull final String uri, @CheckForNull final String usernameOrNull, @Nonnull String reason,
+        HttpGetException(@NonNull final String uri, @CheckForNull final String usernameOrNull, @NonNull String reason,
                 @Nullable Throwable cause) {
             this(uri, usernameOrNull, null, reason, cause);
         }
 
-        HttpGetException(@Nonnull final String uri, @CheckForNull final String usernameOrNull, @Nonnull String reason) {
+        HttpGetException(@NonNull final String uri, @CheckForNull final String usernameOrNull, @NonNull String reason) {
             this(uri, usernameOrNull, null, reason, null);
         }
 
-        @Nonnull
+        @NonNull
         public String getUri() {
             return uri;
         }
