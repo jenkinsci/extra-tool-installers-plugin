@@ -170,7 +170,7 @@ class AuthenticatedDownloadCallable extends MasterToSlaveFileCallable<Date> {
                     dateOfRemoteContents = null;
                     break;
                 case HttpStatus.SC_OK :
-                    final Header lastModifiedResponseHeader = httpRequest.getFirstHeader(lastModified);
+                    final Header lastModifiedResponseHeader = httpResponse.getFirstHeader(lastModified);
                     if (lastModifiedResponseHeader == null) {
                         throw new HttpGetException(uri.toString(), usernameOrNull,
                                 "due to missing " + lastModified + " header value.");
