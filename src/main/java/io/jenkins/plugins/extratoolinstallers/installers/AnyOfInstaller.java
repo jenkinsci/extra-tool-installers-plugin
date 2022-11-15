@@ -8,9 +8,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -190,7 +190,7 @@ public class AnyOfInstaller extends ToolInstaller {
         throw new ExtraToolInstallersException(this, Messages.AnyOfInstaller_all_failed(), lastExceptionEncountered);
     }
 
-    @Nonnull
+    @NonNull
     private List<? extends ToolInstaller> getOurInstallers() {
         if (installers == null || installers.installers == null) {
             return Collections.emptyList();

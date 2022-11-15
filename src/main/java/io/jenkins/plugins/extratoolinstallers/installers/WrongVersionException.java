@@ -2,9 +2,9 @@ package io.jenkins.plugins.extratoolinstallers.installers;
 
 import java.io.IOException;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
@@ -14,11 +14,11 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
  */
 class WrongVersionException extends IOException {
     private static final long serialVersionUID = 1L;
-    @Nonnull
+    @NonNull
     private final String executableName;
-    @Nonnull
+    @NonNull
     private final String whereFound;
-    @Nonnull
+    @NonNull
     private final String detectedVersion;
     @CheckForNull
     private final String minVersion;
@@ -26,8 +26,8 @@ class WrongVersionException extends IOException {
     private final String maxVersion;
 
     @Restricted(NoExternalUse.class)
-    WrongVersionException(@Nonnull final String executableName, @Nonnull final String whereFound,
-            @Nonnull final String detectedVersion, @Nullable final String minVersion, @Nullable final String maxVersion,
+    WrongVersionException(@NonNull final String executableName, @NonNull final String whereFound,
+            @NonNull final String detectedVersion, @Nullable final String minVersion, @Nullable final String maxVersion,
             @Nullable Throwable cause) {
         super("Executable '" + executableName + "' at " + whereFound + " is version \"" + detectedVersion
                 + "\" but we require" + (minVersion != null ? " >= \"" + minVersion + "\"" : "")
@@ -41,8 +41,8 @@ class WrongVersionException extends IOException {
     }
 
     @Restricted(NoExternalUse.class)
-    WrongVersionException(@Nonnull final String executableName, @Nonnull final String whereFound,
-            @Nonnull final String detectedVersion, @Nullable final String minVersion,
+    WrongVersionException(@NonNull final String executableName, @NonNull final String whereFound,
+            @NonNull final String detectedVersion, @Nullable final String minVersion,
             @Nullable final String maxVersion) {
         this(executableName, whereFound, detectedVersion, minVersion, maxVersion, null);
     }

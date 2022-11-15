@@ -22,9 +22,9 @@ import hudson.slaves.NodeProperty;
 import hudson.tools.ToolInstaller;
 import jenkins.model.Jenkins;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * Provides parsing of environment variables in input string.
@@ -56,7 +56,7 @@ public class EnvStringParseHelper {
      * @return Substituted string
      */
     @Nullable
-    public static String substituteNodeVariables(@CheckForNull String macroString, @Nonnull Node node) {
+    public static String substituteNodeVariables(@CheckForNull String macroString, @NonNull Node node) {
         if (macroString == null) return null;
         if (!macroString.contains("${")) {
             return macroString;
