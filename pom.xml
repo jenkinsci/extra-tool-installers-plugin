@@ -58,6 +58,10 @@
         <!-- Main Dependencies -->
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>apache-httpcomponents-client-4-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>credentials</artifactId>
             <!-- Earliest version that supports c:select checkMethod="post" is 2.1.15, dated Sep 6 2017. -->
         </dependency>

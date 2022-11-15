@@ -4,25 +4,32 @@ import static hudson.FilePath.TarCompression.GZIP;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Date;
 
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.URI;
-import org.apache.commons.httpclient.URIException;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.HeadMethod;
-import org.apache.commons.httpclient.util.DateParseException;
-import org.apache.commons.httpclient.util.DateUtil;
 import org.apache.commons.io.input.CountingInputStream;
+import org.apache.http.Header;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpStatus;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.AuthCache;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.client.utils.DateUtils;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicAuthCache;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 
 import hudson.FilePath;
 import hudson.model.TaskListener;
@@ -50,7 +57,7 @@ class AuthenticatedDownloadCallable extends MasterToSlaveFileCallable<Date> {
     /**
      * Passed to {@link FilePath#act(hudson.FilePath.FileCallable)} in order to
      * run
-     * {@link #doDownload(HttpMethodBase, FilePath, TaskListener, URI, String, String)}
+     * {@link #doDownload(HttpRequestBase, FilePath, TaskListener, URI, String, String)}
      * on a remote node.
      * 
      * @param uri
@@ -127,29 +134,28 @@ class AuthenticatedDownloadCallable extends MasterToSlaveFileCallable<Date> {
             @CheckForNull final String passwordOrNull, @CheckForNull final Long timestampOfLocalContents,
             @NonNull final String nodeName, @CheckForNull final FilePath whereToDownloadToOrNull,
             @CheckForNull final TaskListener logOrNull) throws IOException, InterruptedException {
-        final HttpClient client = new HttpClient();
-        final HttpMethodBase httpRequest;
+        final CloseableHttpClient httpClient = HttpClients.createDefault();
+        final HttpClientContext httpClientContext = HttpClientContext.create();
+        final HttpRequestBase httpRequest;
         if (whereToDownloadToOrNull == null) {
             // we're only validating the URL & credentials.
-            httpRequest = new HeadMethod();
+            httpRequest = new HttpHead();
         } else {
-            httpRequest = new GetMethod();
+            httpRequest = new HttpGet();
         }
         httpRequest.setURI(uri);
         if (usernameOrNull != null) {
-            setAuthentication(usernameOrNull, passwordOrNull, client, httpRequest);
+            setAuthentication(usernameOrNull, passwordOrNull, httpClient, httpClientContext, uri);
         }
-        httpRequest.setFollowRedirects(true);
         final Date dateOfLocalContents = timestampOfLocalContents == null ? null : new Date(timestampOfLocalContents);
         final String ifModifiedSince = "If-Modified-Since";
         final String lastModified = "Last-Modified";
         if (dateOfLocalContents != null) {
-            final String timestampAsString = DateUtil.formatDate(dateOfLocalContents);
-            final Header header = new Header(ifModifiedSince, timestampAsString);
-            httpRequest.addRequestHeader(header);
+            final String timestampAsString = DateUtils.formatDate(dateOfLocalContents);
+            httpRequest.addHeader(ifModifiedSince, timestampAsString);
         }
-        try {
-            final int status = client.executeMethod(httpRequest);
+        try (CloseableHttpResponse httpResponse = httpClient.execute(httpRequest, httpClientContext)) {
+            final int status = httpResponse.getStatusLine().getStatusCode();
             /*
              * if (logOrNull != null) { final String msg = "HTTP GET of " + uri
              * + " with request headers of " +
@@ -164,22 +170,22 @@ class AuthenticatedDownloadCallable extends MasterToSlaveFileCallable<Date> {
                     dateOfRemoteContents = null;
                     break;
                 case HttpStatus.SC_OK :
-                    final Header lastModifiedResponseHeader = httpRequest.getResponseHeader(lastModified);
+                    final Header lastModifiedResponseHeader = httpRequest.getFirstHeader(lastModified);
                     if (lastModifiedResponseHeader == null) {
                         throw new HttpGetException(uri.toString(), usernameOrNull,
                                 "due to missing " + lastModified + " header value.");
                     }
                     final String lastModifiedStringValue = lastModifiedResponseHeader.getValue();
-                    try {
-                        final Date dateFromRemoteServer = DateUtil.parseDate(lastModifiedStringValue);
+                    final Date dateFromRemoteServer = DateUtils.parseDate(lastModifiedStringValue);
+                    if (dateFromRemoteServer != null) {
                         if (dateOfLocalContents == null || dateFromRemoteServer.after(dateOfLocalContents)) {
                             dateOfRemoteContents = dateFromRemoteServer;
                         } else {
                             dateOfRemoteContents = null;
                         }
-                    } catch (DateParseException ex) {
+                    } else {
                         throw new HttpGetException(uri.toString(), usernameOrNull, "due to invalid " + lastModified
-                                + " header value, \"" + lastModifiedStringValue + "\".", ex);
+                                + " header value, \"" + lastModifiedStringValue + "\".");
                     }
                     break;
                 default :
@@ -192,25 +198,27 @@ class AuthenticatedDownloadCallable extends MasterToSlaveFileCallable<Date> {
                     httpRequest.abort();
                     return null;
                 } else {
-                    doDownload(httpRequest, whereToDownloadToOrNull, logOrNull, uri, usernameOrNull, nodeName);
+                    doDownload(httpResponse, whereToDownloadToOrNull, logOrNull, uri, usernameOrNull, nodeName);
                 }
             }
             return dateOfRemoteContents;
-        } finally {
-            httpRequest.releaseConnection();
         }
     }
 
     private static void setAuthentication(@CheckForNull final String usernameOrNull,
-            @CheckForNull final String passwordOrNull, @NonNull final HttpClient client,
-            @NonNull final HttpMethodBase httpRequest) throws URIException {
+            @CheckForNull final String passwordOrNull, @NonNull final CloseableHttpClient client,
+            @NonNull final HttpClientContext httpClientContext, @NonNull URI uri) {
         final UsernamePasswordCredentials httpClientCredentials = new UsernamePasswordCredentials(usernameOrNull,
                 passwordOrNull);
-        final String host = httpRequest.getURI().getHost();
-        final AuthScope scope = new AuthScope(host, -1);
-        client.getState().setCredentials(scope, httpClientCredentials);
-        httpRequest.setDoAuthentication(true);
-        client.getParams().setAuthenticationPreemptive(true);
+        final AuthScope scope = new AuthScope(uri.getHost(), uri.getPort());
+        final CredentialsProvider credsProvider = new BasicCredentialsProvider();
+        credsProvider.setCredentials(scope, httpClientCredentials);
+        httpClientContext.setCredentialsProvider(credsProvider);
+        final AuthCache authCache = new BasicAuthCache();
+        authCache.put(
+                new HttpHost(uri.getHost(), uri.getPort(), uri.getScheme()),
+                new BasicScheme());
+        httpClientContext.setAuthCache(authCache);
     }
 
     private static void skipDownload(@NonNull final FilePath whereToDownloadTo,
@@ -222,10 +230,10 @@ class AuthenticatedDownloadCallable extends MasterToSlaveFileCallable<Date> {
         }
     }
 
-    private static void doDownload(@NonNull final HttpMethodBase httpGet, @NonNull final FilePath whereToDownloadTo,
+    private static void doDownload(@NonNull final CloseableHttpResponse httpResponse, @NonNull final FilePath whereToDownloadTo,
             @CheckForNull final TaskListener logOrNull, @NonNull final URI uri,
             @CheckForNull final String usernameOrNull, @NonNull final String nodeName)
-            throws IOException, InterruptedException, URIException {
+            throws IOException, InterruptedException {
         if (whereToDownloadTo.exists()) {
             whereToDownloadTo.deleteContents();
             if (logOrNull != null) {
@@ -248,8 +256,8 @@ class AuthenticatedDownloadCallable extends MasterToSlaveFileCallable<Date> {
             }
         }
         final boolean isZipNotGzip = uri.getPath().endsWith(".zip");
-        final long expectedContentLength = httpGet.getResponseContentLength();
-        try (final CountingInputStream cis = new CountingInputStream(httpGet.getResponseBodyAsStream())) {
+        final long expectedContentLength = httpResponse.getEntity().getContentLength();
+        try (final CountingInputStream cis = new CountingInputStream(httpResponse.getEntity().getContent())) {
             try {
                 if (isZipNotGzip) {
                     whereToDownloadTo.unzipFrom(cis);
@@ -287,8 +295,7 @@ class AuthenticatedDownloadCallable extends MasterToSlaveFileCallable<Date> {
         }
 
         HttpGetException(@NonNull final String uri, @CheckForNull final String usernameOrNull, int httpStatusCode) {
-            this(uri, usernameOrNull, httpStatusCode,
-                    httpStatusCode + " (" + HttpStatus.getStatusText(httpStatusCode) + ")", null);
+            this(uri, usernameOrNull, httpStatusCode, Integer.toString(httpStatusCode), null);
         }
 
         HttpGetException(@NonNull final String uri, @CheckForNull final String usernameOrNull, @NonNull String reason,
