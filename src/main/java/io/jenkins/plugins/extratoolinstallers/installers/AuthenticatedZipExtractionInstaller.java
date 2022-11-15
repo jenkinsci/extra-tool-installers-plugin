@@ -285,7 +285,7 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
     private static @CheckForNull StandardCredentials getCredentialsOrNull(@NonNull final String credentialsId,
             @CheckForNull final String urlHostOrNullOrEmpty) {
         final List<DomainRequirement> forOurUrl = getDomainRequirements(urlHostOrNullOrEmpty);
-        final ItemGroup<?> allOfJenkins = Jenkins.getInstance();
+        final ItemGroup<?> allOfJenkins = Jenkins.getInstanceOrNull();
         final CredentialsMatcher onlyOurCredentials = CredentialsMatchers.allOf(CREDENTIAL_TYPES_WE_CAN_HANDLE,
                 CredentialsMatchers.withId(credentialsId));
         final List<StandardCredentials> allJenkinsCredentialsForOurUrl = CredentialsProvider
@@ -328,9 +328,9 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
     private static @NonNull List<DomainRequirement> getDomainRequirements(
             @CheckForNull final String urlHostOrNullOrEmpty) {
         if (Util.fixEmpty(urlHostOrNullOrEmpty) != null) {
-            return Collections.<DomainRequirement>singletonList(new HostnameRequirement(urlHostOrNullOrEmpty));
+            return Collections.singletonList(new HostnameRequirement(urlHostOrNullOrEmpty));
         } else {
-            return Collections.<DomainRequirement>emptyList();
+            return Collections.emptyList();
         }
     }
 
@@ -338,9 +338,11 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
     static class ChmodRecAPlusX extends MasterToSlaveFileCallable<Void> {
         private static final long serialVersionUID = 1L;
 
+        @Override
         public Void invoke(File d, VirtualChannel channel) throws IOException {
-            if (!Functions.isWindows())
+            if (!Functions.isWindows()) {
                 process(d);
+            }
             return null;
         }
 
@@ -363,6 +365,7 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
      */
     @Extension @Symbol("authenticatedzip")
     public static class DescriptorImpl extends ToolInstallerDescriptor<AuthenticatedZipExtractionInstaller> {
+        @Override
         public String getDisplayName() {
             return Messages.AuthenticatedZipExtractionInstaller_DescriptorImpl_displayName();
         }
@@ -391,7 +394,7 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
                     // suppress exception as url is validated elsewhere
                 }
                 /* System.out.println("  urlHost = " + urlHost); */
-                final ItemGroup<?> allOfJenkins = Jenkins.getInstance();
+                final ItemGroup<?> allOfJenkins = Jenkins.getInstanceOrNull();
                 final List<DomainRequirement> domainRequirements = getDomainRequirements(urlHostOrNullOrEmpty);
                 result.includeMatchingAs(ACL.SYSTEM, allOfJenkins, StandardCredentials.class, domainRequirements,
                         CREDENTIAL_TYPES_WE_CAN_HANDLE);
@@ -454,7 +457,7 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
          */
         private static @NonNull FormValidation checkUrlAndCredentialsId(final boolean checkUrl,
                 @CheckForNull final String credentialsIdOrNull, @CheckForNull final String urlOrNull) {
-            if (!(hasPermissionToConfigure())) {
+            if (!hasPermissionToConfigure()) {
                 /*
                  * System.out.println(
                  * "checkUrlAndCredentialsId:  NOT hasPermissionToConfigure");
@@ -558,7 +561,7 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
         }
 
         private static boolean hasPermissionToConfigure() {
-            return Jenkins.getInstance().hasPermission(Jenkins.ADMINISTER);
+            return Jenkins.get().hasPermission(Jenkins.ADMINISTER);
         }
     }
 }

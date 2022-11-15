@@ -42,7 +42,9 @@ public class EnvStringParseHelper {
      * @since 0.3
      */
     public static String substituteEnvVars(String macroString, EnvVars environment)  {
-        if (macroString == null) return null;
+        if (macroString == null) {
+            return null;
+        }
         if (!macroString.contains("${")) {
             return macroString;
         }
@@ -57,7 +59,9 @@ public class EnvStringParseHelper {
      */
     @Nullable
     public static String substituteNodeVariables(@CheckForNull String macroString, @NonNull Node node) {
-        if (macroString == null) return null;
+        if (macroString == null) {
+            return null;
+        }
         if (!macroString.contains("${")) {
             return macroString;
         }
@@ -69,7 +73,7 @@ public class EnvStringParseHelper {
         }
 
         // Substitute global variables
-        final Jenkins jenkinsInstance = Jenkins.getInstance();
+        final Jenkins jenkinsInstance = Jenkins.get();
         for (NodeProperty<?> entry : jenkinsInstance.getGlobalNodeProperties()) {
             substitutedString = substituteNodeProperty(substitutedString, entry);
         }

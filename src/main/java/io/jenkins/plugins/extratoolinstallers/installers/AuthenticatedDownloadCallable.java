@@ -81,6 +81,7 @@ class AuthenticatedDownloadCallable extends MasterToSlaveFileCallable<Date> {
         this.logOrNull = logOrNull;
     }
 
+    @Override
     public Date invoke(@NonNull File d, VirtualChannel channel) throws IOException, InterruptedException {
         final FilePath whereToDownloadTo = new FilePath(d);
         return downloadAndUnpack(uri, usernameOrNull, passwordOrNull, timestampOfLocalContents, nodeName,
