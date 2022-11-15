@@ -1,6 +1,5 @@
 package io.jenkins.plugins.extratoolinstallers.installers;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
@@ -16,14 +15,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.SystemUtils;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import hudson.FilePath;
+import hudson.Functions;
 import hudson.Launcher;
 import hudson.model.Node;
 import hudson.model.TaskListener;
@@ -117,7 +117,7 @@ public class IsAlreadyOnPathTest {
         // Given
         final Node mockNode = mock(Node.class);
         final ToolInstallation mockTool = mock(ToolInstallation.class);
-        final List<String> actualLogRecord = newArrayList();
+        final List<String> actualLogRecord = new ArrayList<>();
         final TaskListener mockLog = mockTaskListener(actualLogRecord);
         final String expectedExceptionMessage = Messages.IsAlreadyOnPath_executableNameIsEmpty();
         final String expectedLabel = "foobar";
@@ -140,7 +140,7 @@ public class IsAlreadyOnPathTest {
         final FilePath nodeRootPath = new FilePath(new File(".."));
         when(mockNode.getRootPath()).thenReturn(nodeRootPath);
         final ToolInstallation mockTool = mock(ToolInstallation.class);
-        final List<String> actualLogRecord = newArrayList();
+        final List<String> actualLogRecord = new ArrayList<>();
         final TaskListener mockLog = mockTaskListener(actualLogRecord);
         final String expectedLabel = "foobar";
         final String expectedExecutableName = "someExeThatIsNotPresent";
@@ -162,7 +162,7 @@ public class IsAlreadyOnPathTest {
     @Test
     public void performInstallationGivenExeIsntExecutableThenThrows() throws Exception {
         // Given
-        assumeFalse("Can't test this on Windows as all files are executable", SystemUtils.IS_OS_WINDOWS);
+        assumeFalse("Can't test this on Windows as all files are executable", Functions.isWindows());
         final TestFOPInstaller instance = new TestFOPInstaller("somelabel");
         final String executableName = "somevalue";
         instance.setExecutableName(executableName);
@@ -271,7 +271,7 @@ public class IsAlreadyOnPathTest {
     }
 
     @Test
-    public void parseVersionCmdOutputForVersionGivenNonMatchingPatternThenReturnsNull() throws Exception {
+    public void parseVersionCmdOutputForVersionGivenNonMatchingPatternThenReturnsNull() {
         // Given
         final Pattern versionPattern = Pattern.compile("git version ([0-9.]*)");
         final String cmdOutput = "command\nnot\nfound";
@@ -285,7 +285,7 @@ public class IsAlreadyOnPathTest {
     }
 
     @Test
-    public void parseVersionCmdOutputForVersionGivenMatchingPatternThenReturnsGroups() throws Exception {
+    public void parseVersionCmdOutputForVersionGivenMatchingPatternThenReturnsGroups() {
         // Given
         final Pattern versionPattern = Pattern.compile("git version ([0-9.]*)");
         final String cmdOutput = "git version 1.2.3\n";
@@ -299,7 +299,7 @@ public class IsAlreadyOnPathTest {
     }
 
     @Test
-    public void checkVersionIsInRangeGivenSimpleVersionWithinRangeThenReturnsZero() throws Exception {
+    public void checkVersionIsInRangeGivenSimpleVersionWithinRangeThenReturnsZero() {
         // Given
         final String versionMin = "1.0.0";
         final String versionMax = "1.99";
@@ -314,7 +314,7 @@ public class IsAlreadyOnPathTest {
     }
 
     @Test
-    public void checkVersionIsInRangeGivenVersionSlightlyBeyondRangeWithinRangeThenReturnsPositive() throws Exception {
+    public void checkVersionIsInRangeGivenVersionSlightlyBeyondRangeWithinRangeThenReturnsPositive() {
         // Given
         final String versionMin = "1.0.0";
         final String versionMax = "1.2.3";
@@ -329,7 +329,7 @@ public class IsAlreadyOnPathTest {
     }
 
     @Test
-    public void checkVersionIsInRangeGivenAllKindsOfVersionsThenReturnsAsExpected() throws Exception {
+    public void checkVersionIsInRangeGivenAllKindsOfVersionsThenReturnsAsExpected() {
         // Given
         final String[] versionsInOrder = { null, "A", "A.", "A.1", "A1", "B", "0.1", "1", "1.A", "1.2", "1.2.3.4",
                 "1.2.3.4A", "1A", "2.something" };
@@ -381,7 +381,7 @@ public class IsAlreadyOnPathTest {
         final FilePath nodeRootPath = new FilePath(new File(".."));
         when(mockNode.getRootPath()).thenReturn(nodeRootPath);
         final ToolInstallation mockTool = mock(ToolInstallation.class);
-        final List<String> actualLogRecord = newArrayList();
+        final List<String> actualLogRecord = new ArrayList<>();
         final TaskListener mockLog = mockTaskListener(actualLogRecord);
         final TestFOPCallable callable = new TestFOPCallable(expectedExecutableName, mockLog);
         exeParentDir.mkdirs();
@@ -434,7 +434,7 @@ public class IsAlreadyOnPathTest {
         final PrintStream ps = mock(PrintStream.class);
         doAnswer(new Answer<Void>() {
             @Override
-            public Void answer(InvocationOnMock invocation) throws Throwable {
+            public Void answer(InvocationOnMock invocation) {
                 final Object[] args = invocation.getArguments();
                 final String arg = (String) args[0];
                 whereToRecord.add(arg);
@@ -449,7 +449,7 @@ public class IsAlreadyOnPathTest {
     private static class TestFOPCallable extends FindOnPathCallable {
         private static final long serialVersionUID = 2L;
 
-        private static interface IMock {
+        private interface IMock {
             String getPath();
         }
 
@@ -466,7 +466,7 @@ public class IsAlreadyOnPathTest {
     }
 
     private static class TestFOPInstaller extends IsAlreadyOnPath {
-        private static interface IMock {
+        private interface IMock {
             FindOnPathCallable mkCallable(String exeName, TaskListener logOrNull);
             void launchCmd(String[] cmd, OutputStream output) throws IOException, InterruptedException;
         }
