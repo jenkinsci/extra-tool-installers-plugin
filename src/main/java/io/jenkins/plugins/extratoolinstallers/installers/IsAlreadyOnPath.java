@@ -20,8 +20,6 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
-import com.google.common.base.Joiner;
-
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -132,7 +130,7 @@ public class IsAlreadyOnPath extends ToolInstaller {
         if (v == null) {
             return "";
         }
-        return Joiner.on('\n').join(v);
+        return String.join("\n", v);
     }
 
     /**
@@ -337,6 +335,7 @@ public class IsAlreadyOnPath extends ToolInstaller {
     @Extension
     @Symbol("findonpath")
     public static class DescriptorImpl extends ToolInstallerDescriptor<IsAlreadyOnPath> {
+        @Override
         public String getDisplayName() {
             return Messages.IsAlreadyOnPath_DescriptorImpl_displayName();
         }

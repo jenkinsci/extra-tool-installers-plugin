@@ -40,6 +40,7 @@ class FindOnPathCallable extends MasterToSlaveFileCallable<String> {
         this.logOrNull = logOrNull;
     }
 
+    @Override
     public String invoke(@NonNull File d, VirtualChannel channel) throws IOException, InterruptedException {
         return findOnPath(executableName, getPath(), logOrNull);
     }

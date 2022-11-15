@@ -61,8 +61,9 @@ public class BatchCommandInstaller extends AbstractExtraToolInstaller {
     private static String fixCrLf(String s) {
         // eliminate CR
         int idx;
-        while((idx=s.indexOf("\r\n"))!=-1)
-            s = s.substring(0,idx)+s.substring(idx+1);
+        while ((idx = s.indexOf("\r\n")) != -1) {
+            s = s.substring(0, idx) + s.substring(idx + 1);
+        }
         return s;
     }
     
