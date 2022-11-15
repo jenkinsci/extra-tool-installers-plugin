@@ -2,6 +2,8 @@ package io.jenkins.plugins.extratoolinstallers.installers;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -11,9 +13,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.URI;
-import org.apache.commons.httpclient.URIException;
+import org.apache.http.HttpStatus;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -148,9 +148,9 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
         final URI uri;
         final String urlHost;
         try {
-            uri = new URI(url, false);
+            uri = new URI(url);
             urlHost = uri.getHost();
-        } catch (URIException ex) {
+        } catch (URISyntaxException ex) {
             throw new ExtraToolInstallersException(this, Messages.AuthenticatedZipExtractionInstaller_malformed_url(),
                     ex);
         }
@@ -385,10 +385,10 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
                 try {
                     final String urlString = Util.fixEmpty(url);
                     if (urlString != null) {
-                        final URI uri = new URI(urlString, false);
+                        final URI uri = new URI(urlString);
                         urlHostOrNullOrEmpty = uri.getHost();
                     }
-                } catch (URIException ex) {
+                } catch (URISyntaxException ex) {
                     /*
                      * System.out.println("  url = invalid, ex=" +
                      * ex.toString());
@@ -475,9 +475,9 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
             final URI uri;
             final String urlHostOrNullOrEmpty;
             try {
-                uri = new URI(urlOrNull, false);
+                uri = new URI(urlOrNull);
                 urlHostOrNullOrEmpty = uri.getHost();
-            } catch (URIException ex) {
+            } catch (URISyntaxException ex) {
                 /*
                  * System.out.println(
                  * "checkUrlAndCredentialsId:  url = invalid, ex=" +
