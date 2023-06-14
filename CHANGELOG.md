@@ -1,7 +1,16 @@
 # Version History
 
-### Unreleased
-CI build of latest code can be found [here](https://ci.jenkins.io/job/Plugins/job/extra-tool-installers-plugin/job/master/lastSuccessfulBuild/artifact/target/).
+## Unreleased
+
+CI build of latest code can be found [here](https://ci.jenkins.io/job/Plugins/job/extra-tool-installers-plugin/job/master/).
+
+## Releases 1.2 and up
+
+Changelogs for releases 1.2 onwards are on the [plugin page](https://plugins.jenkins.io/extra-tool-installers/releases/)
+
+## Older releases
+
+Older release changes can be found here.
 
 ### Version 1.1
 _Feb 11, 2022_
