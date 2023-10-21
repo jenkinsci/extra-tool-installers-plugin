@@ -2,7 +2,7 @@
 
 [![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/extra-tool-installers.svg)](https://plugins.jenkins.io/extra-tool-installers)
 [![Jenkins Plugin Installs](https://img.shields.io/jenkins/plugin/i/extra-tool-installers.svg?color=blue)](https://plugins.jenkins.io/extra-tool-installers)
-[![Build Status](https://ci.jenkins.io/job/Plugins/job/extra-tool-installers-plugin/job/master/badge/icon)](https://ci.jenkins.io/job/Plugins/job/extra-tool-installers-plugin/job/master/)
+[![Build Status](https://ci.jenkins.io/job/Plugins/job/extra-tool-installers-plugin/job/main/badge/icon)](https://ci.jenkins.io/job/Plugins/job/extra-tool-installers-plugin/job/main/)
 
 ## Features
 

@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-CI build of latest code can be found [here](https://ci.jenkins.io/job/Plugins/job/extra-tool-installers-plugin/job/master/).
+CI build of latest code can be found [here](https://ci.jenkins.io/job/Plugins/job/extra-tool-installers-plugin/job/main/).
 
 ## Releases 1.2 and up
 
