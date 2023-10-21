@@ -10,15 +10,14 @@
 
     <groupId>io.jenkins.plugins</groupId>
     <artifactId>extra-tool-installers</artifactId>
-    <version>${revision}${changelist}</version>
+    <version>${changelist}</version>
     <name>Jenkins Extra Tool Installers Plugin</name>
     <description>Provides additional tool installation methods.</description>
     <packaging>hpi</packaging>
     <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
 
     <properties>
-        <revision>1.3</revision>
-        <changelist>-SNAPSHOT</changelist>
+        <changelist>999999-SNAPSHOT</changelist>
         <jenkins.version>2.401.3</jenkins.version>
         <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
     </properties>
