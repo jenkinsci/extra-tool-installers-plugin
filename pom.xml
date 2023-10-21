@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>4.51</version>
+        <version>4.74</version>
         <relativePath />
     </parent>
 
@@ -19,7 +19,7 @@
     <properties>
         <revision>1.3</revision>
         <changelist>-SNAPSHOT</changelist>
-        <jenkins.version>2.332.1</jenkins.version>
+        <jenkins.version>2.401.3</jenkins.version>
         <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
     </properties>
 
@@ -37,23 +37,6 @@
         </pluginRepository>
     </pluginRepositories>
 
-    <developers>
-        <developer>
-            <id>oleg_nenashev</id>
-            <name>Oleg Nenashev</name>
-            <roles>
-                <role>maintainer (retired)</role>
-            </roles>
-        </developer>
-        <developer>
-            <id>pjdarton</id>
-            <name>Peter Darton</name>
-            <roles>
-                <role>maintainer (retired)</role>
-            </roles>
-        </developer>
-    </developers>
-
     <dependencies>
         <!-- Main Dependencies -->
         <dependency>
@@ -63,7 +46,6 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>credentials</artifactId>
-            <!-- Earliest version that supports c:select checkMethod="post" is 2.1.15, dated Sep 6 2017. -->
         </dependency>
         <!-- Test Dependencies -->
         <dependency>
@@ -83,8 +65,8 @@
         <dependencies>
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
-                <artifactId>bom-2.332.x</artifactId>
-                <version>1763.v092b_8980a_f5e</version>
+                <artifactId>bom-2.401.x</artifactId>
+                <version>2507.vcb_18c56b_f57c</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>

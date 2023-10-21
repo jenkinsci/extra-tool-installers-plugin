@@ -4,11 +4,6 @@
 [![Jenkins Plugin Installs](https://img.shields.io/jenkins/plugin/i/extra-tool-installers.svg?color=blue)](https://plugins.jenkins.io/extra-tool-installers)
 [![Build Status](https://ci.jenkins.io/job/Plugins/job/extra-tool-installers-plugin/job/master/badge/icon)](https://ci.jenkins.io/job/Plugins/job/extra-tool-installers-plugin/job/master/)
 
-Note: This plugin is officially ["up for adoption"](https://www.jenkins.io/doc/developer/plugin-governance/adopt-a-plugin/#faq).
-It would benefit from having a new maintainer who uses it "for real work"
-and is thus able to test things "for real" before release
-instead of relying purely on the unit tests.
-
 ## Features
 
 Plugin provides following installers:
