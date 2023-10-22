@@ -66,6 +66,68 @@ That's why this example specifies a "Relative Path" of "git" (and a "Subdirector
 
 ![](docs/images/example-checkAlreadyOnPath.png)
 
+## JcasC
+
+Plugin can be configured using JCasC. Please find some example bellow.
+
+They are using extra plugin [generic-tool](https://plugins.jenkins.io/generic-tool/) and [ansible](https://plugins.jenkins.io/ansible/)
+
+```
+tool:
+  maven:
+    installations:
+    - name: "maven-3.9.4"
+      properties:
+      - installSource:
+          installers:
+          - anyOf:
+              attemptsOfWholeList: 3
+              attemptsPerInstaller: 5
+              installers:
+                installers:
+                - authenticatedzip:
+                    label: "linux"
+                    subdir: "apache-maven-3.9.5"
+                    url: "https://private.registry.company.org/maven/3.9.5/binaries/apache-maven-3.9.5-bin.tar.gz"
+                    credentialsId: "private-registry-credentials-id"
+                - authenticatedzip:
+                    label: "linux"
+                    subdir: "apache-maven-3.9.5"
+                    url: "https://archive.apache.org/dist/maven/maven-3/3.9.5/binaries/apache-maven-3.9.5-bin.tar.gz"
+                - stubInstaller:
+                    failOnSubstitution: false
+                    failTheBuild: true
+                    label: "!linux"
+                    message: "Unable to install on this node"
+  generic:
+    installations:
+    - name: "python3"
+      properties:
+      - installSource:
+          installers:
+          - findonpath:
+              executableName: "python3"
+              label: "built-in"
+              versionCmd:
+              - "python3 --version"
+              versionCmdString: "python3 --version"
+              versionMax: "3.12.0"
+              versionMin: "3.10.0"
+              versionPatternString: "Python (.*)"
+
+  ansible:
+    installations:
+    - name: "ansible"
+      properties:
+      - installSource:
+          installers:
+          - sharedDirectoryInstaller:
+              failOnSubstitution: true
+              label: "linux"
+              toolHome: "^${HOME}/.local/bin/ansible"
+
+```
+
 ## See also
 * [Software licence](LICENSE)
 * Support and [contribution guide](CONTRIBUTING.md)
