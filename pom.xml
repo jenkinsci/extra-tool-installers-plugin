@@ -20,7 +20,7 @@
         <changelist>999999-SNAPSHOT</changelist>
         <jenkins.version>2.414.3</jenkins.version>
         <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
-        <configuration-as-code.version>1714.v09593e830cfa</configuration-as-code.version>
+        <configuration-as-code.version>1737.v652ee9b_a_e0d9</configuration-as-code.version>
     </properties>
 
     <repositories>
@@ -80,7 +80,7 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>ansible</artifactId>
-            <version>276.vef26df37652f</version>
+            <version>285.v2f044b_eb_7a_3e</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
