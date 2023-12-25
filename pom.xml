@@ -80,7 +80,7 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>ansible</artifactId>
-            <version>285.v2f044b_eb_7a_3e</version>
+            <version>303.vccb_73a_956ecd</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
