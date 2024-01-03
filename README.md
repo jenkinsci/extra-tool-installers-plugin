@@ -1,6 +1,8 @@
 # Extra Tool Installers plugin for Jenkins
 
 [![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/extra-tool-installers.svg)](https://plugins.jenkins.io/extra-tool-installers)
+[![Coverage](https://ci.jenkins.io/job/Plugins/job/extra-tool-installers-plugin/job/main/badge/icon?status=${instructionCoverage}&subject=coverage&color=${colorInstructionCoverage})](https://ci.jenkins.io/job/Plugins/job/extra-tool-installers-plugin/job/main)
+[![LOC](https://ci.jenkins.io/job/Plugins/job/extra-tool-installers-plugin/job/main/badge/icon?job=test&status=${lineOfCode}&subject=line%20of%20code&color=blue)](https://ci.jenkins.io/job/Plugins/job/extra-tool-installers-plugin/job/main)
 [![Jenkins Plugin Installs](https://img.shields.io/jenkins/plugin/i/extra-tool-installers.svg?color=blue)](https://plugins.jenkins.io/extra-tool-installers)
 [![Build Status](https://ci.jenkins.io/job/Plugins/job/extra-tool-installers-plugin/job/main/badge/icon)](https://ci.jenkins.io/job/Plugins/job/extra-tool-installers-plugin/job/main/)
 
