@@ -20,7 +20,7 @@
         <changelist>999999-SNAPSHOT</changelist>
         <jenkins.version>2.426.2</jenkins.version>
         <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
-        <configuration-as-code.version>1756.v2b_7eea_874392</configuration-as-code.version>
+        <configuration-as-code.version>1775.v810dc950b_514</configuration-as-code.version>
     </properties>
 
     <repositories>
