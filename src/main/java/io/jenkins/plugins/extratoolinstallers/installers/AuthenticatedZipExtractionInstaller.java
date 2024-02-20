@@ -65,6 +65,8 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
     @CheckForNull
     private String subdir;
 
+    private boolean fallbackToExistingInstallation;
+
     /**
      * Constructor that sets mandatory fields.
      * 
@@ -139,6 +141,15 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
     @DataBoundSetter
     public void setSubdir(@Nullable String subdir) {
         this.subdir = Util.fixEmpty(subdir);
+    }
+
+    public boolean isFallbackToExistingInstallation() {
+        return fallbackToExistingInstallation;
+    }
+
+    @DataBoundSetter
+    public void setFallbackToExistingInstallation(boolean fallbackToExistingInstallation) {
+        this.fallbackToExistingInstallation = fallbackToExistingInstallation;
     }
 
     @Override
@@ -266,7 +277,7 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
             @NonNull final FilePath dir, @CheckForNull final TaskListener logOrNull, @NonNull final String nodeName)
             throws IOException, InterruptedException {
         final Date timestampOfRemoteResource = AuthenticatedDownloadCallable.downloadAndUnpack(uri, usernameOrNull,
-                passwordOrNull, timestampOfLocalContents, nodeName, dir, logOrNull);
+                passwordOrNull, timestampOfLocalContents, nodeName, dir, logOrNull, fallbackToExistingInstallation);
         return timestampOfRemoteResource;
     }
 
@@ -275,7 +286,7 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
             @NonNull final FilePath dir, @CheckForNull final TaskListener logOrNull, @NonNull final String nodeName)
             throws IOException, InterruptedException {
         final AuthenticatedDownloadCallable nodeOperation = new AuthenticatedDownloadCallable(uri, usernameOrNull,
-                passwordOrNull, timestampOfLocalContents, nodeName, logOrNull);
+                passwordOrNull, timestampOfLocalContents, nodeName, logOrNull, fallbackToExistingInstallation);
         final Date timestampOfRemoteResource = dir.act(nodeOperation);
         return timestampOfRemoteResource;
     }
@@ -524,7 +535,7 @@ public class AuthenticatedZipExtractionInstaller extends ToolInstaller {
                  * whereToDownloadToOrNull + "," + log + ")");
                  */
                 AuthenticatedDownloadCallable.downloadAndUnpack(uri, usernameOrNull, passwordOrNull,
-                        timestampOfLocalContents, nodeName, whereToDownloadToOrNull, log);
+                        timestampOfLocalContents, nodeName, whereToDownloadToOrNull, log, false);
             } catch (AuthenticatedDownloadCallable.HttpGetException ex) {
                 final Integer httpStatusCodeOrNull = ex.getHttpStatusCode();
                 if (httpStatusCodeOrNull != null) {
