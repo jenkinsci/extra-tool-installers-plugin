@@ -66,24 +66,22 @@ class AuthenticatedDownloadCallable extends MasterToSlaveFileCallable<Date> {
      *            What to download.
      * @param usernameOrNull
      *            Username to authenticate as, or null for an anonymous
-     *                                       download.
+     *            download.
      * @param passwordOrNull
      *            Password for the username, or null for no password.
      * @param timestampOfLocalContents
      *            null for an unconditional download, else the timestamp of what
-     *                                       we have locally.
+     *            we have locally.
      * @param nodeName
      *            The name of the node we are downloading onto. Used for logging
-     *                                       purposes only.
+     *            purposes only.
      * @param logOrNull
      *            Where to log build progress. Can be null to suppress the
-     *                                       normal running commentary.
-     * @param fallbackToExistingInstallation
-     *          If set to true and an installation of the tool already exists the download won't fail.
+     *            normal running commentary.
      */
     AuthenticatedDownloadCallable(@NonNull URI uri, @CheckForNull String usernameOrNull,
-                                  @CheckForNull String passwordOrNull, @CheckForNull Long timestampOfLocalContents, @NonNull String nodeName,
-                                  @CheckForNull TaskListener logOrNull, boolean fallbackToExistingInstallation) {
+            @CheckForNull String passwordOrNull, @CheckForNull Long timestampOfLocalContents, @NonNull String nodeName,
+            @CheckForNull TaskListener logOrNull, boolean fallbackToExistingInstallation) {
         this.uri = uri;
         this.usernameOrNull = usernameOrNull;
         this.passwordOrNull = passwordOrNull;
