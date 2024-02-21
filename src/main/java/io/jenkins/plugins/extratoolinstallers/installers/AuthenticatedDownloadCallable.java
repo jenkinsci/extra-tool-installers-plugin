@@ -192,7 +192,7 @@ class AuthenticatedDownloadCallable extends MasterToSlaveFileCallable<Date> {
                     }
                     break;
                 default :
-                    if (fallbackToExistingInstallation & existingToolInstallationAvailable(whereToDownloadToOrNull)) {
+                    if (fallbackToExistingInstallation && existingToolInstallationAvailable(whereToDownloadToOrNull)) {
                         if (logOrNull != null) {
                             String msg = Messages.AuthenticatedDownloadCallable_fallback_to_existing(status);
                             logOrNull.getLogger().println(msg);
