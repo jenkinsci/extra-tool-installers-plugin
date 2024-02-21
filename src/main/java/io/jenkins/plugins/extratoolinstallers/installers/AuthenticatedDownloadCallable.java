@@ -54,12 +54,14 @@ class AuthenticatedDownloadCallable extends MasterToSlaveFileCallable<Date> {
     @CheckForNull
     private final TaskListener logOrNull;
 
+    private final boolean fallbackToExistingInstallation;
+
     /**
      * Passed to {@link FilePath#act(hudson.FilePath.FileCallable)} in order to
      * run
      * {@link #doDownload(HttpRequestBase, FilePath, TaskListener, URI, String, String)}
      * on a remote node.
-     * 
+     *
      * @param uri
      *            What to download.
      * @param usernameOrNull
@@ -79,20 +81,21 @@ class AuthenticatedDownloadCallable extends MasterToSlaveFileCallable<Date> {
      */
     AuthenticatedDownloadCallable(@NonNull URI uri, @CheckForNull String usernameOrNull,
             @CheckForNull String passwordOrNull, @CheckForNull Long timestampOfLocalContents, @NonNull String nodeName,
-            @CheckForNull TaskListener logOrNull) {
+            @CheckForNull TaskListener logOrNull, boolean fallbackToExistingInstallation) {
         this.uri = uri;
         this.usernameOrNull = usernameOrNull;
         this.passwordOrNull = passwordOrNull;
         this.timestampOfLocalContents = timestampOfLocalContents;
         this.nodeName = nodeName;
         this.logOrNull = logOrNull;
+        this.fallbackToExistingInstallation = fallbackToExistingInstallation;
     }
 
     @Override
     public Date invoke(@NonNull File d, VirtualChannel channel) throws IOException, InterruptedException {
         final FilePath whereToDownloadTo = new FilePath(d);
         return downloadAndUnpack(uri, usernameOrNull, passwordOrNull, timestampOfLocalContents, nodeName,
-                whereToDownloadTo, logOrNull);
+                whereToDownloadTo, logOrNull, fallbackToExistingInstallation);
     }
 
     /**
@@ -133,7 +136,7 @@ class AuthenticatedDownloadCallable extends MasterToSlaveFileCallable<Date> {
     static Date downloadAndUnpack(@NonNull final URI uri, @CheckForNull final String usernameOrNull,
             @CheckForNull final String passwordOrNull, @CheckForNull final Long timestampOfLocalContents,
             @NonNull final String nodeName, @CheckForNull final FilePath whereToDownloadToOrNull,
-            @CheckForNull final TaskListener logOrNull) throws IOException, InterruptedException {
+            @CheckForNull final TaskListener logOrNull, final boolean fallbackToExistingInstallation) throws IOException, InterruptedException {
         final CloseableHttpClient httpClient = HttpClients.createDefault();
         final HttpClientContext httpClientContext = HttpClientContext.create();
         final HttpRequestBase httpRequest;
@@ -189,6 +192,15 @@ class AuthenticatedDownloadCallable extends MasterToSlaveFileCallable<Date> {
                     }
                     break;
                 default :
+                    if (fallbackToExistingInstallation && existingToolInstallationAvailable(whereToDownloadToOrNull)) {
+                        if (logOrNull != null) {
+                            String msg = Messages.AuthenticatedDownloadCallable_fallback_to_existing(status);
+                            logOrNull.getLogger().println(msg);
+                        }
+                        dateOfRemoteContents = null;
+                        break;
+                    }
+
                     throw new HttpGetException(uri.toString(), usernameOrNull, status);
             }
             if (whereToDownloadToOrNull != null) {
@@ -203,6 +215,10 @@ class AuthenticatedDownloadCallable extends MasterToSlaveFileCallable<Date> {
             }
             return dateOfRemoteContents;
         }
+    }
+
+    private static boolean existingToolInstallationAvailable(FilePath whereToDownloadToOrNull) throws IOException, InterruptedException {
+        return whereToDownloadToOrNull != null && whereToDownloadToOrNull.exists();
     }
 
     private static void setAuthentication(@CheckForNull final String usernameOrNull,

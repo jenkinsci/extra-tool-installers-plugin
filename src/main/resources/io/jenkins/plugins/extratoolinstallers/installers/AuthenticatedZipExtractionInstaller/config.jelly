@@ -10,4 +10,7 @@
     <f:entry title="${%Subdirectory of extracted archive}" field="subdir" help="/descriptor/hudson.tools.ZipExtractionInstaller/help/subdir">
         <f:textbox/>
     </f:entry>
+    <f:entry title="${%Fallback to existing installation}">
+        <f:checkbox field="fallbackToExistingInstallation" />
+    </f:entry>
 </j:jelly>
