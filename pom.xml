@@ -71,7 +71,6 @@
         <dependency>
             <groupId>io.jenkins.plugins</groupId>
             <artifactId>generic-tool</artifactId>
-            <version>1.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -87,7 +86,7 @@
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
                 <artifactId>bom-${jenkins.baseline}.x</artifactId>
-                <version>3850.vb_c5319efa_e29</version>
+                <version>3875.v1df09947cde6</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
