@@ -1,35 +1,34 @@
 package io.jenkins.plugins.extratoolinstallers.jcasc;
 
-import io.jenkins.plugins.casc.misc.ConfiguredWithCode;
-import io.jenkins.plugins.casc.misc.JenkinsConfiguredWithCodeRule;
-import io.jenkins.plugins.extratoolinstallers.installers.AnyOfInstaller;
-import io.jenkins.plugins.extratoolinstallers.installers.AuthenticatedZipExtractionInstaller;
-import io.jenkins.plugins.extratoolinstallers.installers.IsAlreadyOnPath;
-import io.jenkins.plugins.generic_tool.GenericToolInstallation;
-import jenkins.model.Jenkins;
-
-import static org.junit.Assert.assertEquals;
-
-import org.jenkinsci.plugins.ansible.AnsibleInstallation;
-import org.junit.Rule;
-import org.junit.Test;
-
 import com.synopsys.arc.jenkinsci.plugins.extratoolinstallers.installers.SharedDirectoryInstaller;
 import com.synopsys.arc.jenkinsci.plugins.extratoolinstallers.installers.StubInstaller;
-
 import hudson.tasks.Maven.MavenInstallation;
 import hudson.tools.InstallSourceProperty;
 import hudson.tools.ToolProperty;
 import hudson.tools.ToolPropertyDescriptor;
 import hudson.util.DescribableList;
+import io.jenkins.plugins.casc.misc.ConfiguredWithCode;
+import io.jenkins.plugins.casc.misc.JenkinsConfiguredWithCodeRule;
+import io.jenkins.plugins.casc.misc.junit.jupiter.WithJenkinsConfiguredWithCode;
+import io.jenkins.plugins.extratoolinstallers.installers.AnyOfInstaller;
+import io.jenkins.plugins.extratoolinstallers.installers.AuthenticatedZipExtractionInstaller;
+import io.jenkins.plugins.extratoolinstallers.installers.IsAlreadyOnPath;
+import io.jenkins.plugins.generic_tool.GenericToolInstallation;
+import jenkins.model.Jenkins;
+import org.jenkinsci.plugins.ansible.AnsibleInstallation;
+import org.junit.jupiter.api.Test;
 
-public class ConfigurationAsCodeTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-    @Rule public JenkinsConfiguredWithCodeRule r = new JenkinsConfiguredWithCodeRule();
+@WithJenkinsConfiguredWithCode
+class ConfigurationAsCodeTest {
 
     @Test
     @ConfiguredWithCode("configuration-as-code.yml")
-    public void should_support_configuration_as_code() throws Exception {
+    void should_support_configuration_as_code(JenkinsConfiguredWithCodeRule r) {
 
         // Just ensure that the structure is correct for maven tool
         MavenInstallation mavenInstallation = Jenkins.get().getDescriptorByType(MavenInstallation.DescriptorImpl.class).getInstallations()[0];
@@ -54,13 +53,13 @@ public class ConfigurationAsCodeTest {
 
         // Installer 2
         assertEquals("linux", installer2.getLabel());
-        assertEquals(null, installer2.getCredentialsId());
+        assertNull(installer2.getCredentialsId());
         assertEquals("https://archive.apache.org/dist/maven/maven-3/3.9.5/binaries/apache-maven-3.9.5-bin.tar.gz", installer2.getUrl());
 
         // Installer 3
         assertEquals("!linux", installer3.getLabel());
-        assertEquals(false, installer3.isFailOnSubstitution());
-        assertEquals(true, installer3.isFailTheBuild());
+        assertFalse(installer3.isFailOnSubstitution());
+        assertTrue(installer3.isFailTheBuild());
         assertEquals("Unable to install on this node", installer3.getMessage());
 
         // Just ensure that the structure is correct for generic tool
@@ -89,7 +88,7 @@ public class ConfigurationAsCodeTest {
 
         SharedDirectoryInstaller sharedDirectoryInstaller = (SharedDirectoryInstaller)ansibleInstallSourceProperty.installers.get(0);
         assertEquals("linux", sharedDirectoryInstaller.getLabel());
-        assertEquals(true, sharedDirectoryInstaller.isFailOnSubstitution());
+        assertTrue(sharedDirectoryInstaller.isFailOnSubstitution());
         assertEquals("${HOME}/.local/bin/ansible", sharedDirectoryInstaller.getToolHome());
 
     }

@@ -1,36 +1,43 @@
 package io.jenkins.plugins.extratoolinstallers.installers;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.*;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-
 import com.synopsys.arc.jenkinsci.plugins.extratoolinstallers.utils.ExtraToolInstallersException;
-
 import hudson.FilePath;
 import hudson.model.Node;
 import hudson.model.TaskListener;
 import hudson.tools.InstallSourceProperty;
 import hudson.tools.ToolInstallation;
 import hudson.tools.ToolInstaller;
+import org.junit.jupiter.api.Test;
+import org.mockito.stubbing.Answer;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.Serial;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 /** Unit test for the {@link AnyOfInstaller} class. */
-public class AnyOfInstallerTest {
+class AnyOfInstallerTest {
 
     @Test
-    public void defaultConstructorWhenCalledThenCreatesDefaultInstance() {
+    void defaultConstructorWhenCalledThenCreatesDefaultInstance() {
         // Given
         final int expectedAttemptsOfWholeList = 1;
         final int expectedAttemptsPerInstaller = 1;
@@ -50,7 +57,7 @@ public class AnyOfInstallerTest {
     }
 
     @Test
-    public void setInstallersWhenCalledWhileToolSetThenSetsToolOnInstallers() throws Exception {
+    void setInstallersWhenCalledWhileToolSetThenSetsToolOnInstallers() throws Exception {
         // Given
         final TestToolInstaller installer1 = mock(TestToolInstaller.class);
         final TestToolInstaller installer2 = mock(TestToolInstaller.class);
@@ -69,7 +76,7 @@ public class AnyOfInstallerTest {
     }
 
     @Test
-    public void getAttemptsPerInstallerGivenZeroNumberThenReturnsOne() {
+    void getAttemptsPerInstallerGivenZeroNumberThenReturnsOne() {
         // Given
         final int expectedAttemptsPerInstaller = 1;
         final AnyOfInstaller instance = new AnyOfInstaller();
@@ -83,7 +90,7 @@ public class AnyOfInstallerTest {
     }
 
     @Test
-    public void getAttemptsPerInstallerGivenNegativeNumberThenReturnsOne() {
+    void getAttemptsPerInstallerGivenNegativeNumberThenReturnsOne() {
         // Given
         final int expectedAttemptsPerInstaller = 1;
         final AnyOfInstaller instance = new AnyOfInstaller();
@@ -97,7 +104,7 @@ public class AnyOfInstallerTest {
     }
 
     @Test
-    public void getAttemptsOfWholeListGivenZeroNumberThenReturnsOne() {
+    void getAttemptsOfWholeListGivenZeroNumberThenReturnsOne() {
         // Given
         final int expectedAttemptsOfWholeList = 1;
         final AnyOfInstaller instance = new AnyOfInstaller();
@@ -111,7 +118,7 @@ public class AnyOfInstallerTest {
     }
 
     @Test
-    public void getAttemptsOfWholeListGivenNegativeNumberThenReturnsOne() {
+    void getAttemptsOfWholeListGivenNegativeNumberThenReturnsOne() {
         // Given
         final int expectedAttemptsOfWholeList = 1;
         final AnyOfInstaller instance = new AnyOfInstaller();
@@ -125,7 +132,7 @@ public class AnyOfInstallerTest {
     }
 
     @Test
-    public void setToolWhenCalledNoInstancesThenJustSetsTool() {
+    void setToolWhenCalledNoInstancesThenJustSetsTool() {
         // Given
         final AnyOfInstaller instance = new AnyOfInstaller();
         final ToolInstallation mockToolInstallation = mock(ToolInstallation.class);
@@ -138,7 +145,7 @@ public class AnyOfInstallerTest {
     }
 
     @Test
-    public void setToolWhenCalledWithInstancesThenSetsToolOnThoseAsWell() throws Exception {
+    void setToolWhenCalledWithInstancesThenSetsToolOnThoseAsWell() throws Exception {
         // Given
         final TestToolInstaller installer1 = mock(TestToolInstaller.class);
         final TestToolInstaller installer2 = mock(TestToolInstaller.class);
@@ -157,7 +164,7 @@ public class AnyOfInstallerTest {
     }
 
     @Test
-    public void appliesToGivenNoInstallersThenReturnsFalse() {
+    void appliesToGivenNoInstallersThenReturnsFalse() {
         // Given
         final AnyOfInstaller instance = new AnyOfInstaller();
         final Node mockNode = mock(Node.class);
@@ -170,7 +177,7 @@ public class AnyOfInstallerTest {
     }
 
     @Test
-    public void appliesToGivenNoApplicableInstallersThenReturnsFalse() throws Exception {
+    void appliesToGivenNoApplicableInstallersThenReturnsFalse() throws Exception {
         // Given
         final Node mockNode = mock(Node.class);
         final ToolInstaller installer1 = mock(ToolInstaller.class);
@@ -190,7 +197,7 @@ public class AnyOfInstallerTest {
     }
 
     @Test
-    public void appliesToGivenOneApplicableInstallerThenReturnsTrue() throws Exception {
+    void appliesToGivenOneApplicableInstallerThenReturnsTrue() throws Exception {
         // Given
         final Node mockNode = mock(Node.class);
         final ToolInstaller installer1 = mock(ToolInstaller.class);
@@ -210,7 +217,7 @@ public class AnyOfInstallerTest {
     }
 
     @Test
-    public void performInstallationGiven1Loop1FailingInstaller1AttemptThenFails() throws Exception {
+    void performInstallationGiven1Loop1FailingInstaller1AttemptThenFails() throws Exception {
         // Given
         final Node mockNode = mock(Node.class);
         final ToolInstallation mockTool = mock(ToolInstallation.class);
@@ -228,19 +235,17 @@ public class AnyOfInstallerTest {
                 1, installerDisplayName, 1, 1, expectedCause));
 
         // When
-        try {
-            instance.performInstallation(mockTool, mockNode, mockLog);
-            fail("Expected " + ExtraToolInstallersException.class);
-        } catch (ExtraToolInstallersException ex) {
-            // Then
-            assertThat(ex.getCause(), sameInstance(expectedCause));
-        }
+        final ExtraToolInstallersException ex = assertThrows(ExtraToolInstallersException.class,
+                () -> instance.performInstallation(mockTool, mockNode, mockLog));
+
+        // Then
+        assertThat(ex.getCause(), sameInstance(expectedCause));
         assertThat(actualLogRecord, equalTo(expectedLogRecord));
         verify(installer, times(1)).performInstallation(mockTool, mockNode, mockLog);
     }
 
     @Test
-    public void performInstallationGivenOneLoopAFailingInapplicableInstallerAndAPassingApplicableInstallerOneAttemptThenPasses()
+    void performInstallationGivenOneLoopAFailingInapplicableInstallerAndAPassingApplicableInstallerOneAttemptThenPasses()
             throws Exception {
         // Given
         final Node mockNode = mock(Node.class);
@@ -272,7 +277,7 @@ public class AnyOfInstallerTest {
     }
 
     @Test
-    public void performInstallationGivenTwoLoopsFourUnreliableInstallersThreeAttemptsThenEventuallyPasses()
+    void performInstallationGivenTwoLoopsFourUnreliableInstallersThreeAttemptsThenEventuallyPasses()
             throws Exception {
         // Given
         final Node mockNode = mock(Node.class);
@@ -388,14 +393,11 @@ public class AnyOfInstallerTest {
     /** Creates a {@link TaskListener} that records everything printed to it. */
     private static TaskListener mockTaskListener(List<String> whereToRecord) {
         final PrintStream ps = mock(PrintStream.class);
-        doAnswer(new Answer<Void>() {
-            @Override
-            public Void answer(InvocationOnMock invocation) {
-                final Object[] args = invocation.getArguments();
-                final String arg = (String) args[0];
-                whereToRecord.add(arg);
-                return null;
-            }
+        doAnswer((Answer<Void>) invocation -> {
+            final Object[] args = invocation.getArguments();
+            final String arg = (String) args[0];
+            whereToRecord.add(arg);
+            return null;
         }).when(ps).println(anyString());
         final TaskListener tl = mock(TaskListener.class);
         when(tl.getLogger()).thenReturn(ps);
@@ -403,7 +405,7 @@ public class AnyOfInstallerTest {
     }
 
     /** Makes {@link #setTool(ToolInstallation)} visible to this test. */
-    private static abstract class TestToolInstaller extends ToolInstaller {
+    private abstract static class TestToolInstaller extends ToolInstaller {
         public TestToolInstaller(String label) {
             super(label);
         }
@@ -416,6 +418,7 @@ public class AnyOfInstallerTest {
 
     /** Used to test installation failures. */
     private static class PretendInstallerFailureException extends IOException {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         PretendInstallerFailureException() {
