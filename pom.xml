@@ -80,6 +80,11 @@
             <version>403.v8d0ca_dcb_b_502</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.wiremock</groupId>
+            <artifactId>wiremock-standalone</artifactId>
+            <version>3.12.0</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>

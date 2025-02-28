@@ -226,14 +226,16 @@ class AuthenticatedDownloadCallable extends MasterToSlaveFileCallable<Date> {
                                           @NonNull final HttpClientContext httpClientContext, @NonNull URI uri) {
         final UsernamePasswordCredentials httpClientCredentials = new UsernamePasswordCredentials(username,
                 password.toCharArray());
-        final AuthScope scope = new AuthScope(uri.getHost(), uri.getPort());
+        final HttpHost targetHost = new HttpHost(uri.getScheme(), uri.getHost(), uri.getPort());
+        final AuthScope scope = new AuthScope(targetHost);
         final BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
         credsProvider.setCredentials(scope, httpClientCredentials);
         httpClientContext.setCredentialsProvider(credsProvider);
         final AuthCache authCache = new BasicAuthCache();
-        authCache.put(
-                new HttpHost(uri.getScheme(), uri.getHost(), uri.getPort()),
-                new BasicScheme());
+        final BasicScheme basicScheme = new BasicScheme();
+        basicScheme.initPreemptive(httpClientCredentials);
+
+        authCache.put(targetHost, basicScheme);
         httpClientContext.setAuthCache(authCache);
     }
 
