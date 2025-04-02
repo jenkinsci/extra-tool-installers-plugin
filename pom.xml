@@ -77,7 +77,7 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>ansible</artifactId>
-            <version>403.v8d0ca_dcb_b_502</version>
+            <version>524.v9fa_a_4c989224</version>
             <scope>test</scope>
         </dependency>
         <dependency>
