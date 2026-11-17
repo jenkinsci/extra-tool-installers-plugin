@@ -20,7 +20,9 @@ import java.time.Instant;
 import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -64,6 +66,37 @@ class AuthenticatedZipExtractionInstallerTest {
         assertEquals(r.jenkins.getRootPath(), location);
         assertTrue(location.child(TEST_TXT).exists());
         assertEquals(TEST_TXT, location.child(TEST_TXT).readToString());
+    }
+
+    @Test
+    void shouldKeepExistingInstallationWhenNotModified(JenkinsRule r) throws Exception {
+        String lastModified = DateUtils.formatStandardDate(Instant.parse("2024-01-01T00:00:00Z"));
+        wireMock.stubFor(get(urlEqualTo(TEST_PATH))
+                .willReturn(aResponse()
+                        .withStatus(HttpStatus.SC_OK)
+                        .withBodyFile(DUMMY_ZIP)
+                        .withHeader(HttpHeaders.CONTENT_TYPE, "application/zip")
+                        .withHeader(HttpHeaders.LAST_MODIFIED, lastModified)));
+
+        ToolInstallation installation = new GenericToolInstallation(DUMMY_ZIP, r.jenkins.getRootDir().getAbsolutePath(), List.of());
+        AuthenticatedZipExtractionInstaller installer = new AuthenticatedZipExtractionInstaller("unauthenticated");
+        installer.setUrl(wireMock.baseUrl() + TEST_PATH);
+        FilePath location = installer.performInstallation(installation, r.jenkins, r.createTaskListener());
+        assertTrue(location.child(TEST_TXT).exists());
+        assertEquals(TEST_TXT, location.child(TEST_TXT).readToString());
+
+        long timestampBefore = location.child(".timestamp").lastModified();
+        wireMock.stubFor(get(urlEqualTo(TEST_PATH))
+                .withHeader(HttpHeaders.IF_MODIFIED_SINCE, equalTo(lastModified))
+                .willReturn(aResponse().withStatus(HttpStatus.SC_NOT_MODIFIED)));
+
+        FilePath secondLocation = installer.performInstallation(installation, r.jenkins, r.createTaskListener());
+        assertEquals(location, secondLocation);
+        assertTrue(secondLocation.child(TEST_TXT).exists());
+        assertEquals(TEST_TXT, secondLocation.child(TEST_TXT).readToString());
+        assertEquals(timestampBefore, secondLocation.child(".timestamp").lastModified());
+        wireMock.verify(1, getRequestedFor(urlEqualTo(TEST_PATH))
+                .withHeader(HttpHeaders.IF_MODIFIED_SINCE, equalTo(lastModified)));
     }
 
     @Test
